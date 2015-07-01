@@ -491,12 +491,15 @@ Errors that might take place when making this request :
 
 + Response 200
     
+    + Headers
+            
+            Location: /api/quotes/1
+
+    + Body
             {
                 "errorMessage":"",
                 "errorCode":0,
-                "responseData": {
-                    "url":"/api/quotes/1"
-                }
+                "responseData": ""
             }
 
 ## Rating [/api/quotes/{quote_id}/rating]
@@ -541,7 +544,7 @@ User errors that might occur due to this request :
     <tr>
         <td>200</td>
         <td>5007</td>
-        <td>Rating a quote that doesn't exist.</td>
+        <td>Invalid quote_id.</td>
         <td>Someone tried to rate a quote that is deleted or doesn't exist.</td>
         <td>Provide a quote_id that belongs to an existing quote</td>
     </tr>
@@ -562,13 +565,52 @@ User errors that might occur due to this request :
                 "rating": 5.5
             }
 
-+ Response 200
++ Response 200 (application/json)
             
             {
                 "errorMessage":"",
                 "errorCode":0,
-                "responseData": null
+                "responseData": ""
             }   
+
+### Retrieve a quote's rating [GET]
+
+Error's that might take place by making this request:
+
+<table>
+    <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5008</td>
+        <td>The quote doesn't exist so there is not rating for it.</td>
+        <td>An invalid quote_id parameter given.</td>
+        <td>Provide a quote_id number for an existing quote</td>
+    </tr>
+</table>
+
+
++ Request
+
+    + Headers
+    
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response 200 (application/json)
+
+            {
+                "errorMessage": "",
+                "errorCode":0,
+                "responseData": {
+                    "rating": 9.2
+                }
+            }
+            
 
 ## Resource representing a single quote [/api/quotes/{quote_id}]
 
@@ -582,6 +624,32 @@ This resource represents a single quote
 
 This action is used to modify a quote.    
 point : modifying a quote puts it in the line for validation and sets the rating to the default
+
+Error's that might take place by making this request:
+    
+<table>
+    <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5007</td>
+        <td>Invalid quote_id </td>
+        <td>U are trying to modify a quote that doesn't exist.</td>
+        <td>Retry with a valid quote_id</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5001</td>
+        <td>Incorrect body format</td>
+        <td>The text for the query is missing or there isn't any text parameter</td>
+        <td>Format the body correctly and resend it with another request</td>
+    </tr>
+</table>
 
 + text (string) - the text for the new modified quote.
     
@@ -604,26 +672,81 @@ point : modifying a quote puts it in the line for validation and sets the rating
     
             Location: /api/quotes/3
             
+    + Body
+            
+            {
+                "errorMessage": "",
+                "errorCode": 0,
+                "responseData": ""
+            }
             
 ### Delete a quote [DELETE]
 
 This action is used to delete a quote.
 
-+ Response 200
+Erro's that might take place due to this request :
+    
+<table>
+    <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5007</td>
+        <td>Invalid quote_id </td>
+        <td>U are trying to modify a quote that doesn't exist.</td>
+        <td>Retry with a valid quote_id</td>
+    </tr>
+</table>
+
++ Response 200 (application/json)
+
+            {
+                "errorMessage": "",
+                "errorCode": 0,
+                "responseData": ""
+            }
 
 ### Retrieve a quote [GET]
 
 This action is used to retrive a single quote by its Id
 
+Errors that might occur by making this action :
+
+<table>
+    <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5007</td>
+        <td>Invalid quote_id </td>
+        <td>U are trying to modify a quote that doesn't exist.</td>
+        <td>Retry with a valid quote_id</td>
+    </tr>
+</table>
+    
 + Response 200 (application/json)
 
             {
-                "id": 1,
-                "text": "Sometimes I feel like only google understands me!",
-                "author_id": 999,
-                "date_published": "2014-11-11T08:40:51.620Z",
-                "rating": 8.3,
-                "viewers": 1000000
+                "errorMessage": "",
+                "errorCode": 0,
+                "responseData": {
+                    "id": 1,
+                    "text": "Sometimes I feel like only google understands me!",
+                    "author_id": 999,
+                    "date_published": "2014-11-11T08:40:51.620Z",
+                    "rating": 8.3,
+                    "viewers": 1000000
+                }
             }
             
             
@@ -632,8 +755,8 @@ This action is used to retrive a single quote by its Id
 resource for operating on a collection of quotes
 
 + Parameters
-    + idrange (optional, number range) - An Id range with the format min-max e.g 11-21
-    + authorid (optional, number) - The Id of the author who's quotes should be retrieved
+    + idrange (optional, number range) - An Id range with the format min-max e.g 11-21 and max < 10000000000
+    + authorid (optional, number) - The Id of the author who's quotes should be retrieved < 8000000000
     + authorrating (optional, number) - The rating of the authors who's quotes should be retrieved.
     + daterange (optional, date) - The date range with the format min-max where min and max should be standard dates.
     + ratingrange (optional, number) - A range range with the format min-max e.g 3.8-9  the min and max shoudl be numbers bewteen 0 and 10.
@@ -641,6 +764,53 @@ resource for operating on a collection of quotes
 
 
 ### Retrieve a quote collection [GET]
+
+Errors that might occur by doing this action :
+
+<table>
+     <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5009</td>
+        <td>Wrong idrange</td>
+        <td>min bigger than max or min less than 1 or max bigger than 10000000000</td>
+        <td>give a min < max and min > 0 and max < 10000000000 </td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5010</td>
+        <td>Wrong authorid</td>
+        <td>the given authorid less than 1 and bigger than 8000000000 </td>
+        <td>provide an authorid < 8000000000 and >= 1</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5011</td>
+        <td>Wrong authorrating</td>
+        <td>authorrating parameter not in the permitted bound.</td>
+        <td>ratings should be between 0 and 10 </td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5012</td>
+        <td>Wrong daterange</td>
+        <td>min date given bigger than max date or the dates don't follow the specified standard.</td>
+        <td>Give a min-max date respectively and follow the specified standard date format</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5013</td>
+        <td>Wrong ratingrange</td>
+        <td>min bigger than max or the values not in the specified limit.</td>
+        <td> Provide a respectively formatted min-max and values with in the range 0-10 </td>
+    </tr>
+    
 
 + Response 200 (application/json)
 
@@ -686,7 +856,7 @@ the user sends a phone number and password to the server.
 the server validates the phone and the password
 the server sends a verification code to the user
 point : the verification code will be stored on the device to be mixed with the password when authenticating
-the client then recreate a password using the verification code and the user provided password and sends them to the token production resources.
+the client then recreate a password using the verification code and the user provided password and sends them to the token specific resources to retrieve an access token.
 
 
 ## Authors [/api/authors]
@@ -713,4 +883,123 @@ the client then recreate a password using the verification code and the user pro
 + Response 200
 
     
+## An Author [/api/authors/{author_id}]
+
+resource for a single author.
+
++ Parameters
+    + author_id (required, number) - the author's id
+
+
+### Update an author information [PUT]
+
+
++ Request
+
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+            Content-type: application/json
+
+    + Body
+            {
+                "firstname": "Ahmad",
+                "lastname": "Fazeli"
+            }
+
++ Response 200
+
+
+### DELETE an author [DELETE]
+
++ Request
+
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response 200
+
+
+### Retrieve an author's information [GET]
+
++ Request
+    
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response 200 (application/json)
+
+            {
+                "firstname": "Nazar",
+                "lastname" : "Abdolkhanie",
+                "rating"   : 9.1
+            }
+
+                
+
+
+## Author Collection [/api/authors?{idrange}&{ratingrange}]
+
+Use this resource to retrieve collections of authors
+
++ Parameters
+    + idrange (optional, number range) - A range with the form min-max like 3-666
+    + ratingrange (optional, number range - A range with the form min-max where min and max are numbers between 0 and 10
+
+### Retrive author collection [GET]
+    
++ Request
         
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response 200 (application/json)
+
+            {
+                "Authors" : [
+                    {
+                        "id" : 3000000,
+                        "firstname" : "Hosam",
+                        "lastname"  : "Abdolkhanie",
+                        "rating"    : 5.3
+                    }, {
+                        "id" : 44433,
+                        "fistname"  : "Ali",
+                        "lastname"  : "Moradi",
+                        "rating"    : 6.2
+                    }
+                ]
+            }
+
+
+## Search [/api/quotes?{sq}&{authorid}&{ratingrange}&{quoteidrange}&{authorratingrange}&{authoridrange}]
+
+Use this resource to search quotes.
+
++ Parameters
+    + sq (required, string) - the search query
+    + authorid (optional, number) - the author who's query whould be searched
+    + ratingrange (optional, number range) - the rating range of the quotes which should be searched. this has the form of min-max where min and max are numbers between 0 and 10
+    + quoteidrange (optional, number range) - the quote id range that should be searched. this has the form of min-max where min and max are numbers != 0 and less than 10000000000
+    + authorratingrange (optional, number range) - the author's rating range whom should be searched. it has the form of min-max where min and max are numbers between 0 and 10
+    + authoridrange(optional, number range) - the authro id range that should be searched. This has the form of min-max where min and max are numbers != 0 and less than 8000000000
+
+
+### Search quotes [GET]
+
+
++ Response 200 (application/json)
+
+            {
+                "quotes": [
+                    {
+                        "author_id": 334,
+                        "authorfirstname": "Nazar",
+                        "authorlastname" : "Fazelie",
+                        "quote_id" : 5030,
+                        "text"     : "There's always someone thinking of you",
+                        "rating"   : 4.5,
+                        "viewers"  : 455542
