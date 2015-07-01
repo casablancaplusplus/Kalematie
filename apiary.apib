@@ -434,6 +434,7 @@ They will search for them in the search engines and the archive and if not found
 
 Errors that might take place when making this request :
 
+<table>
 <tr>
     <td>Http Status Code</td>
     <td>Kalematie Error Code</td>
@@ -466,10 +467,11 @@ Errors that might take place when making this request :
 </tr>
     <td>200</td>
     <td>5004</td>
-    <td>A quote that contains forbidden content</td>
+    <td>This quote contains forbidden content</td>
     <td>A quote that would contain political or taboo content</td>
     <td>Come up with a more respectable quote</td>
 </tr>
+</table>
 
 + text (string) - the quote
 
@@ -501,6 +503,7 @@ Errors that might take place when making this request :
 
 This resource is used to rate quotes or update their rating.
 
+
 + Parameters
     + quote_id (required, number) - The id of the quote that is going to be rated
     
@@ -510,6 +513,39 @@ This resource is used to rate quotes or update their rating.
 
 This action is used to rate a quote or update its rating. You need to provide a number between 0 and 10 
 in the body to represent your rating.
+
+User errors that might occur due to this request :
+
+<table>
+    <tr>
+        <td>Http Status Code</td>
+        <td>Kalematie Error Code</td>
+        <td>Description</td>
+        <td>Scenario</td>
+        <td>Resolution</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5005</td>
+        <td>Rating number not within the permitted limit</td>
+        <td>giving a rating number bigger than 10 or less than 0</td>
+        <td>Give a rating number between 0 and 10</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5006</td>
+        <td>A member can't rate his own quote.</td>
+        <td>A member rated his own quote.</td>
+        <td>Don't rate your own quote.</td>
+    </tr>
+    <tr>
+        <td>200</td>
+        <td>5007</td>
+        <td>Rating a quote that doesn't exist.</td>
+        <td>Someone tried to rate a quote that is deleted or doesn't exist.</td>
+        <td>Provide a quote_id that belongs to an existing quote</td>
+    </tr>
+</table>
 
 + rating (number, required) - A number between 0 and 10 that will represent your rating
 
@@ -527,6 +563,12 @@ in the body to represent your rating.
             }
 
 + Response 200
+            
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": null
+            }   
 
 ## Resource representing a single quote [/api/quotes/{quote_id}]
 
