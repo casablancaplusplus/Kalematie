@@ -325,9 +325,28 @@ to the app client to tell them when to send requests.
 
 # Group Token
 
-This portion of the API pertains to obtaining a bearer token from the Security Wrapper. The bearer token thus
+This portion of the API pertains to obtaining a bearer token from the <b>Security Wrapper</b>. The bearer token thus
 obtained is passed in the <code>Authorization</code> header in all subsequent requests to the underlying
 resource APIs.
+
+Errors that might occur due to this request :
+
+<table>
+<tr>
+    <td>Http Status Code</td>
+    <td>Kalematie Error Code</td>
+    <td>Description</td>
+    <td>Scenario</td>
+    <td>Resolution</td>
+</tr>
+<tr>
+    <td>500</td>
+    <td>10001</td>
+    <td>Error creating token</td>
+    <td>The token could not be created in the underlying data storage</td>
+    <td>May be due to network issues. Try again later</td>
+</tr>
+
 
 ## Access token [/api/token]
 
@@ -363,6 +382,9 @@ Should a bearer token become compromised or need to be invalidated for any reaso
 The <code>Authorization</code> header should contain the Base64 encoded credentials. The body of the request
 should contain the <code>access_token</code> that needs to be invalidated.
 
+Errors that might occur by making this request :
+
+
 ### Invalidate an access token [POST]
 
 + access_token (string) - the access token that should be invalidated Which is supposed to belong to u
@@ -383,7 +405,12 @@ should contain the <code>access_token</code> that needs to be invalidated.
 + Response 200 (application/json)
 
         {
-            "access_token":"ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj"
+            "errorMessage": "",
+            "errorCode": 0,
+            "responseData" : {
+                "accress_token" = "ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj"
+            }
+            
         }
         
         
@@ -401,9 +428,48 @@ should contain the <code>access_token</code> that needs to be invalidated.
 
 ### Create a new quote [POST]
 
-Craete a new quote.
+Create a new quote.
 This action creates a quote but is not published unless it gets validated by the monitors who check for their Originality.
 They will search for them in the search engines and the archive and if not found, they get published.
+
+Errors that might take place when making this request :
+
+<tr>
+    <td>Http Status Code</td>
+    <td>Kalematie Error Code</td>
+    <td>Description</td>
+    <td>Scenario</td>
+    <td>Resolution</td>
+</tr>
+<tr>
+    <td>200</td>
+    <td>5001</td>
+    <td>Incorrect body format</td>
+    <td>The text for the query is missing or there isn't any text parameter</td>
+    <td>Format the body correctly and resend it with another request</td>
+</tr>
+<tr>
+    <td>200</td>
+    <td>5002</td>
+    <td>Body too big</td>
+    <td>The number of the body exceeds the permitted limit.</td>
+    <td>Provide a shorter quote</td>
+    
+</tr>
+<tr>
+    <td>200</td>
+    <td>5003</td>
+    <td>This quote is not original</td>
+    <td>Might be a copy of someone else's quote</td>
+    <td>Come up with an original quote and try later</td>
+    
+</tr>
+    <td>200</td>
+    <td>5004</td>
+    <td>A quote that contains forbidden content</td>
+    <td>A quote that would contain political or taboo content</td>
+    <td>Come up with a more respectable quote</td>
+</tr>
 
 + text (string) - the quote
 
@@ -423,7 +489,14 @@ They will search for them in the search engines and the archive and if not found
 
 + Response 200
     
-    
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": {
+                    "url":"/api/quotes/1"
+                }
+            }
+
 ## Rating [/api/quotes/{quote_id}/rating]
 
 This resource is used to rate quotes or update their rating.
