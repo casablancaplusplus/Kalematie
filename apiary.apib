@@ -346,9 +346,10 @@ Errors that might occur due to this request :
     <td>The token could not be created in the underlying data storage</td>
     <td>May be due to network issues. Try again later</td>
 </tr>
-
+</table>
 
 ## Access token [/api/token]
+
 
 ### Get an access token [POST]
 
@@ -382,7 +383,6 @@ Should a bearer token become compromised or need to be invalidated for any reaso
 The <code>Authorization</code> header should contain the Base64 encoded credentials. The body of the request
 should contain the <code>access_token</code> that needs to be invalidated.
 
-Errors that might occur by making this request :
 
 
 ### Invalidate an access token [POST]
