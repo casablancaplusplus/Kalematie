@@ -810,33 +810,36 @@ Errors that might occur by doing this action :
         <td>min bigger than max or the values not in the specified limit.</td>
         <td> Provide a respectively formatted min-max and values with in the range 0-10 </td>
     </tr>
-    
+</table>  
 
 + Response 200 (application/json)
 
             {
-                "quote_collection":[
-                    {
-                        "id": 1,
-                        "text": "blah blah blah",
-                        "author_id": 345,
-                        "date_published": "2014-11-11T08:40:51.620Z",
-                        "rating": 8.3,
-                        "viewers": 3000000
-                    }, {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": {
+                    "quote_collection":[
+                        {
+                            "id": 1,
+                            "text": "blah blah blah",
+                            "author_id": 345,
+                            "date_published": "2014-11-11T08:40:51.620Z",
+                            "rating": 8.3,
+                            "viewers": 3000000
+                        }, {
+                            
+                            "id": 55,
+                            "text": "bulshit",
+                            "author_id": 444,
+                            "date_published": "2014-11-11T08:40:51.620Z"
+                            "rating": 4.5,
+                            "viewers": 32434
+                        }
                         
-                        "id": 55,
-                        "text": "bulshit",
-                        "author_id": 444,
-                        "date_published": "2014-11-11T08:40:51.620Z"
-                        "rating": 4.5,
-                        "viewers": 32434
-                    }
+                    ]
                     
-                ]
-                
+                }
             }
-            
             
 # Group Authors
 
