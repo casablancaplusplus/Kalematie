@@ -364,16 +364,17 @@ Get an access token based on Base64 encoded credentials (as discussed in the sec
             accept-encoding: gzip
             content-type: appliaction/json
 
-    + Body
-            
-            grant_type = client_credentials
-
+   
 
 + Response 200 (appliaction/json)
 
         {
-            "token_type": "Bearer",
-            "access_token":"ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj"
+            "errorMessage":"",
+            "errorCode":0,
+            "responseData": {
+                "token_type": "Bearer",
+                "access_token":"ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj"
+            }
         }
 
 
