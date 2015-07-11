@@ -1095,3 +1095,147 @@ Error codes :
             }
 
 
+## Followed authors [/api/authors/{author_id}/followed?{?limit}]
+
+This resource referes to the authors that are followed by a user
+
++ Parameters
+    + author_id (required, number)
+    + limit    (optional, number limit) - limit the number of results as start-count
+    
+
+### Followe an author [POST]
+
+send the id of the author you want to follow in the post body
+
++ Request
+    
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
+    + Body
+        
+            {
+                "followedAuthorId":455332
+            }
+            
++ Response  200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData":""
+            }
+            
+            
+### Retrieve the followed authors [GET]
+
++ Request
+    
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
+
++ Response 200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": {
+                    "followedAuthors" : [
+                        {
+                            "authorId":344156,
+                            "firstname": "Walter",
+                            "lastname": "White",
+                            "rating":   8.9
+                        }, {
+                            
+                            "authorId": 46457,
+                            "firstname": "jessy",
+                            "lastname": "unknown",
+                            "rating" : 3.3
+                        }
+                    ]
+                }
+            }
+            
+
+## A single followed author [/api/authors/{author_id}/followed/{id}]
+
+
+
+### Retrieve a single followed author [GET]
+
+
++ Request
+    
+    + Headers
+    
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
+
++ Response 200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData" : {
+                    
+                    "firstname" : "Nazar",
+                    "lastname"  : "Abdolkhanie",
+                    "rating"    : 9.9
+                }
+            }
+            
+
+### Delete a followed author from the followed list [DELETE]
+
+Use this action to delete an author from the follow list of yours
+
++ Request
+
+    + Headers
+        
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+            
+
++ Response  200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData":""
+            }
+            
+            
+## Followers [/api/authors/{author_id}/followers]
+
+
+### Retrieve an authors followers [GET]
+
++ Request
+    
+    + Headers
+    
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response  200 (application/json)
+
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": {
+                    "followers": [
+                        {
+                            "author_id":435435,
+                            "firstname" : "Ali",
+                            "lastname"  : "valipur",
+                            "rating"    :8.9
+                        }
+                    ]
+                }
+            }
+                    
