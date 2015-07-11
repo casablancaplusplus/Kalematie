@@ -853,6 +853,8 @@ Authors have the following attributes :
 + phonenumber (number) - the users phone number
 + password (string)
 + rating (number) - a number between 0 and 10 representing the user's rating
++ following (number) - the number of people this author is following
++ followers (number) - The number of people following this author
 
 note : Error's related to this group of resources starts from 5050
 
@@ -1023,6 +1025,8 @@ Error codes :
                     "firstname": "Nazar",
                     "lastname" : "Abdolkhanie",
                     "rating"   : 9.1
+                    "followers" : 239,
+                    "following" : 45
                 }
             }
 
@@ -1084,11 +1088,15 @@ Error codes :
                             "firstname" : "Hosam",
                             "lastname"  : "Abdolkhanie",
                             "rating"    : 5.3
+                            "followers" : 453,
+                            "following" : 35
                         }, {
                             "id" : 44433,
                             "fistname"  : "Ali",
                             "lastname"  : "Moradi",
                             "rating"    : 6.2
+                            "followers" : 432,
+                            "following" : 23
                         }
                     ]
                 }
@@ -1149,13 +1157,17 @@ send the id of the author you want to follow in the post body
                             "authorId":344156,
                             "firstname": "Walter",
                             "lastname": "White",
-                            "rating":   8.9
+                            "rating":   8.9,
+                            "following" : 654,
+                            "followers" : 221
                         }, {
                             
                             "authorId": 46457,
                             "firstname": "jessy",
                             "lastname": "unknown",
                             "rating" : 3.3
+                            "following": 567,
+                            "following": 455
                         }
                     ]
                 }
@@ -1185,7 +1197,10 @@ send the id of the author you want to follow in the post body
                     
                     "firstname" : "Nazar",
                     "lastname"  : "Abdolkhanie",
-                    "rating"    : 9.9
+                    "rating"    : 9.9,
+                    "following" : 5,
+                    "followers" : 45
+                    
                 }
             }
             
@@ -1233,7 +1248,9 @@ Use this action to delete an author from the follow list of yours
                             "author_id":435435,
                             "firstname" : "Ali",
                             "lastname"  : "valipur",
-                            "rating"    :8.9
+                            "rating"    :8.9,
+                            "followers" : 3,
+                            "following" : 34
                         }
                     ]
                 }
