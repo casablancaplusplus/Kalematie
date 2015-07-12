@@ -16,12 +16,28 @@ class   error {
 
     public:
         error();
-        error(std::string   errMessage, int errCode);
+        error(std::string   errMessage, int errCode)
+            : _errMessage(errMessage),
+              _errCode(errCode)
+        {
+        }
         
         // used to output the error to the client 
-        void    putOut(Wt::Http::Response&  response); 
+        void    putOut(Wt::Http::Response&  response)
+        {
+            std::ostream&   out = response.out();
+            
+            response.setMimeType("application/json");
+            out << "{" << std::endl;
+            out << "    \"errorMessage\":\""<<_errMessage<<"\"," <<std::endl;
+            out << "    \"errorCode\":\""<< _errCode <<"\"," << std::endl;
+            out << "    \"responseData\":\"\"" << std::endl;
+            out << "}" << std::endl;
+
+        }
     private:
-        std::string     errMessage;
-        int             errCode;
+        std::string     _errMessage;
+        int             _errCode;
+};
 
 #endif

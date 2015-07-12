@@ -1,0 +1,3 @@
+edit the blueprint -> the authors iformation to contain a role
+
+you where trying to figure out the Bearer stuff and a scheme for the db and the permissions 

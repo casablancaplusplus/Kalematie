@@ -15,4 +15,17 @@
         <td>No such resource</td>
         <td>20002</td>
     </tr>
+    <tr>
+        <td>Resource Not implemented yet</td>
+        <td>20003</td>
+    </tr>
+    <tr>
+        <td>Incorrect Authorization header value</td>
+        <td>20004</td>
+    </tr>
+    <tr>
+        <td>Basic token but invalid url or method</td>
+        <td>20005</td>
+    </tr>
+
 </table>

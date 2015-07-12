@@ -11,7 +11,6 @@ void    quoteResource::handleRequest(   const Wt::Http::Request&    request,
     
    if(request.headerValue("Authorization") == "")
     {
-        // Not implemented yet
         error   headerError("No Authorization header was provided",20000);
         headerError.putOut(response);
     }
@@ -90,11 +89,11 @@ void    quoteResource::initiatePost() {
 
     if(std::regex_match(_url.begin(), _url.end(), __getAccessToken))
     {
-        _getAccessToken_();
+       // done in the security layer 
     }
     else if(std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
     {
-        _invalidateAccessToken_();
+        // doen in the security layer
     }
     else if(std::regex_match(_url.begin(), _url.end(), __createQuote))
     {
@@ -115,7 +114,179 @@ void    quoteResource::initiatePost() {
     }
 }
 
+void    quoteResource::initiatePut() {
 
+    std::string     _url = _request.pathInfo();
+
+    if(std::regex_match(_url.begin(), _url.end(), __getOrPutOrDeleteQuote))
+    {
+        _modifyQuote_();
+    }
+    else if(std::regex_match(_url.begin(), _url.end(), __getOrPutOrDeleteAuthor))
+    {
+        _modifyAuthor_();
+    }
+    else
+    {
+        error urlError("No such resource", 20002);
+        urlError.putOut(_response);
+    }
+}
+
+void    quoteResource::initiateDelete() {
+
+    std::string     _url = _request.pathInfo();
+
+    if(std::regex_match(_url.begin(), _url.end(), __getOrPutOrDeleteQuote))
+    {
+        _deleteQuote_();
+    }
+    else if(std::regex_match(_url.begin(), _url.end(), __getOrPutOrDeleteAuthor))
+    {
+        _deleteAuthor_();
+    }
+    else 
+    {
+        error urlError("No such resource", 20002);
+        urlError.putOut(_response);
+    }
+}
+
+void    quoteResource::_getQuoteRating_() {
+
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+}
+
+void    quoteResource::_getQuote_() {
+
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+}
+
+void    quoteResource::_getQuoteCollection_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_getAuthor_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_getAccessToken_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_invalidateAccessToken_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_createQuote_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_postRating_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_addAuthor_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_modifyQuote_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_modifyAuthor_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_deleteQuote_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+void    quoteResource::_deleteAuthor_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+
+}
+
+
+bool    quoteResource::authenticate() {
+    
+    std::string     authString = _request.headerValue("Authorization");
+    if ( authString == "") {
+        error   authError("No Authorization header was provided");
+        authError.putOut();
+    }
+    else
+    {
+        if(authString.find("Bearer")!=std::basic_string::npos)
+        {
+            // do the Bearer stuff
+        }
+        else if(authString.find("Basic")!=std::basic_string::npos)
+        {
+            std::string     _url = _request.pathInfo();
+            if(_request.method()=="POST" ||
+                    std::regex_match(_url.begin(), _url.end(), __getAccessToken))
+            {
+                _getAccessToken_();
+                return true;
+            }
+            else if(_request.method()=="POST" ||
+                    std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
+            {
+                // Determine if the client has
+                // sufficient permission to operate on
+                // the resource in that way and do invalidate it
+                
+                
+                _invalidateAccessToken_();
+                return true;
+
+            }
+            else
+            {
+                error invalidReqErr("Basic token But invalid url or method", 20005);
+                invalidReqErr.putOut();
+                return false;
+            }
+
+
+
+        }
+        else
+        {
+
+            error   authHeaderErr("Incorrect Authorization header value",20004);
+            authHeaderErr.putOut();
+            
+            return false;
+
+        }
+
+    }
+}
 /* The Regexes */
 
 std::regex      quoteResource::__getAccessToken = std::regex(
@@ -146,7 +317,6 @@ std::regex      quoteResource::__getOrPutOrDeleteAuthor = std::regex(
 std::regex      quoteResource::__getAuthorCollection = std::regex(
         "/authors?(idrange=[1-9][0-9]*-[1-9][0-9]*&)?(ratingrange=[0-9]{1}0*-[0-9]{1}0*)?", std::regex_constants::icase);
 
-std::regex      quoteResource::__searchQuotes = std::regex(
         
 
 

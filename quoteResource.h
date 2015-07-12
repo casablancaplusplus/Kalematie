@@ -39,13 +39,21 @@ class quoteResource : public    Wt::WResource {
         void    _getAuthor_();
 
         // the POST group
-        void    _getAccessToken_();
-        void    _invalidateAccessToken_();
+        void    _getAccessToken_();         // security layer 
+        void    _invalidateAccessToken_();  // security layer
+
         void    _createQuote_();
         void    _postRating_();
         void    _addAuthor_();
 
 
+        // the PUT group
+        void    _modifyQuote_();
+        void    _modifyAuthor_();
+
+        // the DELETE group
+        void    _deleteQuote_();
+        void    _deleteAuthor_();
 
     protected:
         virtual void    handleRequest (
