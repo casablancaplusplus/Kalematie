@@ -22,7 +22,7 @@ class   quote {
         float           rating;
         int             viewers;
 
-        dbo::ptr<author>    quoteAuthor;
+        dbo::ptr<author>    Author;
 
         template<class Action>
             void    persist(Action& a)
@@ -33,7 +33,7 @@ class   quote {
                 dbo::field(a,   rating,         "rating");
                 dbo::field(a,   viewers,        "viewers");
 
-                dbo::belongsTo(a,   quoteAuthor, "quoteAuthor");
+                dbo::belongsTo(a,   Author, "Author");
             }
                 
 };
@@ -75,7 +75,7 @@ class author {
                 dbo::field(a,   followers,  "followers");
                 dbo::field(a,   following,  "following");
 
-                dbo::hasMany(a, quotes, dbo::ManyToOne, "quotes");
+                dbo::hasMany(a, quotes, dbo::ManyToOne, "Author");
             }
 };
 class rating {
