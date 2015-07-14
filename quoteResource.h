@@ -2,10 +2,13 @@
 #define     _QUOTE_RESOURCE_H_
 
 #include "util/error.h"
+#include "dbo/dbo.h"
+#include "dbo/kalematieSession.h"
 
 #include <regex>
 
 #include <Wt/WResource>
+#include <Wt/Dbo/SqlConnectionPool>
 
 
 
@@ -13,7 +16,7 @@ class quoteResource : public    Wt::WResource {
         
 
     public:
-        quoteResource();
+        quoteResource(Wt::Dbo::SqlConnectionPool&   connectionPool);
         
         bool authenticate();
 
@@ -66,10 +69,17 @@ class quoteResource : public    Wt::WResource {
         const Wt::Http::Request&    _request;
         Wt::Http::Response&         _response;
 
+
+        // User Role and id
+        author::role                _role;
+        int                         _authorId;
+
+        // the connection pool
+        Wt::Dbo::SqlConnectionPool&     _connectionPool;
+        
+        
         // These regex objects are used to determine
         // what member function to call
-        
-
         static  std::regex      __getAccessToken;
         static  std::regex      __invalidateAccessToken;
         static  std::regex      __createQuote;
@@ -100,6 +110,8 @@ class quoteResource : public    Wt::WResource {
         static  std::regex      __getOrPutOrDeleteAuthor;
         
         static  std::regex      __getAuthorCollection;
+
+        
 
 };
 #endif

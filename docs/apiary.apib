@@ -421,7 +421,7 @@ should contain the <code>access_token</code> that needs to be invalidated.
 + text (string) - The actual quote.
 + author_id (number) - The author's ID.
 + date_published (date) - A standard date in which the quote was published.
-+ rating (number) - A number between 0 and 10 that represents a quote's rating. overall rating
++ rating (number) - A number between 0 and 10 that represents a quote's rating.
 + viewers (number) - The number of members who viewed the quote and rated it.
 
 ## Quotes [/api/quotes]
@@ -752,17 +752,17 @@ Errors that might occur by making this action :
             }
             
             
-## Quote Collection [/api/quotes?{idrange}&{ratingrange}&{authorid}&{authorrating}]
+## Quote Collection [/api/quotes?{sq}{idrange}&{ratingrange}&{authorid}&{authorratingrange}&{authoridrange}]
 
 resource for operating on a collection of quotes
 
 + Parameters
     + idrange (optional, number range) - An Id range with the format min-max e.g 11-21 and max < 10000000000
     + authorid (optional, number) - The Id of the author who's quotes should be retrieved < 8000000000
-    + authorrating (optional, number) - The rating of the authors who's quotes should be retrieved.
+    + authorratingrange (optional, number) - The rating of the authors who's quotes should be retrieved in the for of min-max.
     + ratingrange (optional, number) - A range range with the format min-max e.g 3.8-9  the min and max shoudl be numbers bewteen 0 and 10.
-
-
+    + authoridrange (optinal, number range) - A range in the form min-max 
+     + sq (required, string) - the search query
 
 ### Retrieve a quote collection [GET]
 
@@ -853,6 +853,8 @@ Authors have the following attributes :
 + phonenumber (number) - the users phone number
 + password (string)
 + rating (number) - a number between 0 and 10 representing the user's rating
++ following (number) - the number of people this author is following
++ followers (number) - The number of people following this author
 
 note : Error's related to this group of resources starts from 5050
 
@@ -1023,6 +1025,8 @@ Error codes :
                     "firstname": "Nazar",
                     "lastname" : "Abdolkhanie",
                     "rating"   : 9.1
+                    "followers" : 239,
+                    "following" : 45
                 }
             }
 
@@ -1084,71 +1088,171 @@ Error codes :
                             "firstname" : "Hosam",
                             "lastname"  : "Abdolkhanie",
                             "rating"    : 5.3
+                            "followers" : 453,
+                            "following" : 35
                         }, {
                             "id" : 44433,
                             "fistname"  : "Ali",
                             "lastname"  : "Moradi",
                             "rating"    : 6.2
+                            "followers" : 432,
+                            "following" : 23
                         }
                     ]
                 }
             }
 
 
-## Search [/api/quotes?{sq}&{author_id}&{ratingrange}&{quoteidrange}&{authorratingrange}&{authoridrange}]
+## Followed authors [/api/authors/{author_id}/followed?{?limit}]
 
-Use this resource to search quotes.
+This resource referes to the authors that are followed by a user
 
 + Parameters
-    + sq (required, string) - the search query
-    + authorid (optional, number) - the author who's query whould be searched
-    + ratingrange (optional, number range) - the rating range of the quotes which should be searched. this has the form of min-max where min and max are numbers between 0 and 10
-    + quoteidrange (optional, number range) - the quote id range that should be searched. this has the form of min-max where min and max are numbers != 0 and less than 10000000000
-    + authorratingrange (optional, number range) - the author's rating range whom should be searched. it has the form of min-max where min and max are numbers between 0 and 10
-    + authoridrange(optional, number range) - the authro id range that should be searched. This has the form of min-max where min and max are numbers != 0 and less than 8000000000
+    + author_id (required, number)
+    + limit    (optional, number limit) - limit the number of results as start-count
+    
+
+### Followe an author [POST]
+
+send the id of the author you want to follow in the post body
+
++ Request
+    
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
+    + Body
+        
+            {
+                "followedAuthorId":455332
+            }
+            
++ Response  200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData":""
+            }
+            
+            
+### Retrieve the followed authors [GET]
+
++ Request
+    
+    + Headers
+            
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
 
 
-### Search quotes [GET]
-
-Error codes :
-
-<table>
-    <tr>
-        <td>Http Status Code</td>
-        <td>Kalematie Error Code</td>
-        <td>Description</td>
-        <td>Scenario</td>
-        <td>Resolution</td>
-    </tr>
-    <tr>
-        <td>200</td>
-        <td>5050</td>
-        <td>Wrong author_id</td>
-        <td>The author_id provided doesn't belong to a particular member or doesn't exist</td>
-        <td>give an author_id that belongs to a valid author</td>
-    </tr>
-    <tr>
-        <td>200</td>
-        <td>5053</td>
-        <td>Invalid rating range</td>
-        <td>min and max rating not in the allowed bound</td>
-        <td>Give a ratingrange in the form min and max where min and max are numbers between 0 and 10 </td>
-    </tr>
 + Response 200 (application/json)
 
-            {   
+            {
                 "errorMessage":"",
                 "errorCode":0,
                 "responseData": {
-                    "quotes": [
+                    "followedAuthors" : [
                         {
-                            "author_id": 334,
-                            "authorfirstname": "Nazar",
-                            "authorlastname" : "Fazelie",
-                            "quote_id" : 5030,
-                            "text"     : "There's always someone thinking of you",
-                            "rating"   : 4.5,
-                            "viewers"  : 455542
+                            "authorId":344156,
+                            "firstname": "Walter",
+                            "lastname": "White",
+                            "rating":   8.9,
+                            "following" : 654,
+                            "followers" : 221
+                        }, {
+                            
+                            "authorId": 46457,
+                            "firstname": "jessy",
+                            "lastname": "unknown",
+                            "rating" : 3.3
+                            "following": 567,
+                            "following": 455
                         }
                     ]
                 }
+            }
+            
+
+## A single followed author [/api/authors/{author_id}/followed/{id}]
+
+
+
+### Retrieve a single followed author [GET]
+
+
++ Request
+    
+    + Headers
+    
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
+
++ Response 200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData" : {
+                    
+                    "firstname" : "Nazar",
+                    "lastname"  : "Abdolkhanie",
+                    "rating"    : 9.9,
+                    "following" : 5,
+                    "followers" : 45
+                    
+                }
+            }
+            
+
+### Delete a followed author from the followed list [DELETE]
+
+Use this action to delete an author from the follow list of yours
+
++ Request
+
+    + Headers
+        
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+            
+
++ Response  200 (application/json)
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData":""
+            }
+            
+            
+## Followers [/api/authors/{author_id}/followers]
+
+
+### Retrieve an authors followers [GET]
+
++ Request
+    
+    + Headers
+    
+            Authorization: Bearer ZTkxMWJkODEtYjUwYy00MzUyLWFhYzEtODI3NWNkMjY0OGFj
+
++ Response  200 (application/json)
+
+
+            {
+                "errorMessage":"",
+                "errorCode":0,
+                "responseData": {
+                    "followers": [
+                        {
+                            "author_id":435435,
+                            "firstname" : "Ali",
+                            "lastname"  : "valipur",
+                            "rating"    :8.9,
+                            "followers" : 3,
+                            "following" : 34
+                        }
+                    ]
+                }
+            }
+                    

@@ -27,5 +27,8 @@
         <td>Basic token but invalid url or method</td>
         <td>20005</td>
     </tr>
-
+    <tr>
+        <td>Invalid access token</td>
+        <td>20006</td>
+    </tr>
 </table>

@@ -3,7 +3,10 @@
 #include "quoteResource.h"
 
 
-quoteResource::quoteResource() {}
+quoteResource::quoteResource(Wt::Dbo::SqlConnectionPool&    connectionPool)
+    : _connectionPool(connectionPool)
+    {
+    }
 
 void    quoteResource::handleRequest(   const Wt::Http::Request&    request,
                                         Wt::Http::Response&         response)
@@ -89,11 +92,11 @@ void    quoteResource::initiatePost() {
 
     if(std::regex_match(_url.begin(), _url.end(), __getAccessToken))
     {
-       // done in the security layer 
+        _getAccessToken_();
     }
     else if(std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
     {
-        // doen in the security layer
+        _invalidateAccessToken_();
     }
     else if(std::regex_match(_url.begin(), _url.end(), __createQuote))
     {
@@ -234,35 +237,63 @@ void    quoteResource::_deleteAuthor_() {
 bool    quoteResource::authenticate() {
     
     std::string     authString = _request.headerValue("Authorization");
+    // TODO : do a size check for the value of the Authorization header
     if ( authString == "") {
         error   authError("No Authorization header was provided");
         authError.putOut();
     }
     else
     {
-        if(authString.find("Bearer")!=std::basic_string::npos)
+        std::size_type  pos;
+        if((pos=authString.find("Bearer"))!=std::basic_string::npos)
         {
-            // do the Bearer stuff
+            
+            // extract the access token
+            std::string     tokenStr;
+            std::string::const_iterator     it = authString.begin();
+            it = it + pos + 6;
+
+            for(;it != authString.end(); it++)
+            {
+                if((*it)!=" ")
+                {
+                     while((*(++it))!=" " || it!=authString.end())
+                     {
+                         tokenStr+=*it;
+                     }
+                     it = authString.end();
+
+                }
+            }
+
+            //check for the token in the db
+            kalematieSession        session(_connectionPool);
+            Wt::Dbo::Transaction    t(session);
+            try {
+                Wt::Dbo::ptr<accessToken>       token =
+                    session.find<accessToken>().where("token = ?").bind(tokenStr);
+            }catch(Wt::Dbo::Exception&  e){
+                error   tokenError("Invalid access token",20006);
+                tokenError.putOut(_response);
+                return false;
+            }
+
+            _role = token->role;
+            _authorId = token->userId;
+
+            return true;
+            
         }
         else if(authString.find("Basic")!=std::basic_string::npos)
         {
             std::string     _url = _request.pathInfo();
-            if(_request.method()=="POST" ||
-                    std::regex_match(_url.begin(), _url.end(), __getAccessToken))
+            if(_request.method() == "POST")
             {
-                _getAccessToken_();
-                return true;
-            }
-            else if(_request.method()=="POST" ||
-                    std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
-            {
-                // Determine if the client has
-                // sufficient permission to operate on
-                // the resource in that way and do invalidate it
-                
-                
-                _invalidateAccessToken_();
-                return true;
+                if(std::regex_match(_url.begin(), _url.end(), __getAccessToken)
+                    || std::regex_match(_url.begin(), _url.end(), _invalidateAccessToken))
+                {
+                    return true;
+                }
 
             }
             else
