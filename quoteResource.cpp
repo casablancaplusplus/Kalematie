@@ -2,57 +2,53 @@
 
 #include "quoteResource.h"
 
+#include <Wt/Http/Request>
 
-quoteResource::quoteResource(Wt::Dbo::SqlConnectionPool&    connectionPool)
-    : _connectionPool(connectionPool)
+quoteResource::quoteResource(Wt::Dbo::SqlConnectionPool&    connectionPool,
+        const   Wt::Http::Request&      request,
+        Wt::Http::Response&             response)
+    : _connectionPool(connectionPool),
+      _request(request),
+      _response(response)
     {
-    }
+        if(_request.headerValue("authorization") == "")
+        {
+            error   headererror("no authorization header was provided",20000);
+            headererror.putOut(response);
+        }
+        else {
 
-void    quoteResource::handleRequest(   const Wt::Http::Request&    request,
-                                        Wt::Http::Response&         response)
-{
-    
-   if(request.headerValue("Authorization") == "")
-    {
-        error   headerError("No Authorization header was provided",20000);
-        headerError.putOut(response);
-    }
-   else {
 
-       _request = request;
-       _response = response;
+            // authenticate not implemented yet
+            if(authenticate()) {
+             
+                 std::string     _url = _request.pathInfo();
+                //check the request method
+                if(_request.method() == "get")
+                {
+                 initiateGet();
+                }
+                else if (_request.method() == "post")
+                {
+                 initiatePost();   
+                }
+                else if (_request.method() == "put")
+                {
+                 initiatePut();   
+                }
+                else if (_request.method() == "delete")
+                {
+                 initiateDelete();   
+                }
+                else {
 
-        // authenticate not implemented yet
-        if(authenticate()) {
-            
-            std::string     _url = request.pathInfo();
-            //check the request method
-            if(request.method() == "GET")
-            {
-                initiateGet();
-            }
-            else if (request.method() == "POST")
-            {
-                initiatePost();   
-            }
-            else if (request.method() == "PUT")
-            {
-                initiatePut();   
-            }
-            else if (request.method() == "DELETE")
-            {
-                initiateDelete();   
-            }
-            else {
+                    error methoderror("method not implemented",20001);
+                    methoderror.putOut(response);
+                }
 
-                error methodError("Method not implemented",20001);
-                methodError.putOut(response);
             }
-
         }
     }
-}
-
 
 void    quoteResource::initiateGet() {
 
@@ -179,6 +175,11 @@ void    quoteResource::_getAuthor_() {
 
 }
 
+void    quoteResource::_getAuthorCollection_() {
+    error   urlError("Resource Not implemented yet", 20003);
+    urlError.putOut(_response);
+}
+
 void    quoteResource::_getAccessToken_() {
     error   urlError("Resource Not implemented yet", 20003);
     urlError.putOut(_response);
@@ -239,13 +240,13 @@ bool    quoteResource::authenticate() {
     std::string     authString = _request.headerValue("Authorization");
     // TODO : do a size check for the value of the Authorization header
     if ( authString == "") {
-        error   authError("No Authorization header was provided");
-        authError.putOut();
+        error   authError("No Authorization header was provided",20000);
+        authError.putOut(_response);
     }
     else
     {
-        std::size_type  pos;
-        if((pos=authString.find("Bearer"))!=std::basic_string::npos)
+        std::string::size_type  pos;
+        if((pos=authString.find("Bearer"))!=std::string::npos)
         {
             
             // extract the access token
@@ -255,9 +256,9 @@ bool    quoteResource::authenticate() {
 
             for(;it != authString.end(); it++)
             {
-                if((*it)!=" ")
+                if((*it)!=' ')
                 {
-                     while((*(++it))!=" " || it!=authString.end())
+                     while((*(++it))!=' ' && it!=authString.end())
                      {
                          tokenStr+=*it;
                      }
@@ -271,26 +272,27 @@ bool    quoteResource::authenticate() {
             Wt::Dbo::Transaction    t(session);
             try {
                 Wt::Dbo::ptr<accessToken>       token =
-                    session.find<accessToken>().where("token = ?").bind(tokenStr);
+                    session.find<accessToken>().where("token = ?").bind(tokenStr); 
+                _role = token->role;
+                _authorId = token->userId;
+
+                return true;
+
             }catch(Wt::Dbo::Exception&  e){
                 error   tokenError("Invalid access token",20006);
                 tokenError.putOut(_response);
                 return false;
             }
 
-            _role = token->role;
-            _authorId = token->userId;
-
-            return true;
-            
+                        
         }
-        else if(authString.find("Basic")!=std::basic_string::npos)
+        else if(authString.find("Basic")!=std::string::npos)
         {
             std::string     _url = _request.pathInfo();
             if(_request.method() == "POST")
             {
                 if(std::regex_match(_url.begin(), _url.end(), __getAccessToken)
-                    || std::regex_match(_url.begin(), _url.end(), _invalidateAccessToken))
+                    || std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
                 {
                     return true;
                 }
@@ -299,7 +301,7 @@ bool    quoteResource::authenticate() {
             else
             {
                 error invalidReqErr("Basic token But invalid url or method", 20005);
-                invalidReqErr.putOut();
+                invalidReqErr.putOut(_response);
                 return false;
             }
 
@@ -310,7 +312,7 @@ bool    quoteResource::authenticate() {
         {
 
             error   authHeaderErr("Incorrect Authorization header value",20004);
-            authHeaderErr.putOut();
+            authHeaderErr.putOut(_response);
             
             return false;
 

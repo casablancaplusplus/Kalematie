@@ -7,16 +7,17 @@
 
 #include <regex>
 
-#include <Wt/WResource>
 #include <Wt/Dbo/SqlConnectionPool>
 
 
 
-class quoteResource : public    Wt::WResource {
+class quoteResource  {
         
 
     public:
-        quoteResource(Wt::Dbo::SqlConnectionPool&   connectionPool);
+        quoteResource(Wt::Dbo::SqlConnectionPool&   connectionPool,
+                const Wt::Http::Request&    request,
+                Wt::Http::Response&         response);
         
         bool authenticate();
 
@@ -40,6 +41,7 @@ class quoteResource : public    Wt::WResource {
         void    _getQuote_();
         void    _getQuoteCollection_();
         void    _getAuthor_();
+        void    _getAuthorCollection_();
 
         // the POST group
         void    _getAccessToken_();         // security layer 
@@ -58,12 +60,6 @@ class quoteResource : public    Wt::WResource {
         void    _deleteQuote_();
         void    _deleteAuthor_();
 
-    protected:
-        virtual void    handleRequest (
-                                        const   Wt::Http::Request&  request,
-                                                Wt::Http::Response& response
-                                      );
-    
     private:
         
         const Wt::Http::Request&    _request;

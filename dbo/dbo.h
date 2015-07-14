@@ -3,6 +3,7 @@
 
 
 #include <Wt/Dbo/Dbo>
+#include <Wt/Dbo/WtSqlTraits>
 #include <Wt/WDate>
 #include <Wt/WDateTime>
 

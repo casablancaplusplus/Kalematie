@@ -3,7 +3,7 @@
 
 
 #include "dbo/kalematieSession.h"
-#include "quoteResource.h"
+#include "quoteResBase.h"
 
 
 int main(int    argc, char  **argv) {
@@ -16,7 +16,7 @@ int main(int    argc, char  **argv) {
             Wt::Dbo::SqlConnectionPool  *quoteDb
                 = kalematieSession::createConnectionPool(server.appRoot() +
                         "quoteDb.db");
-            quoteResource   res(*quoteDb);
+            quoteResBase   res(*quoteDb);
             server.addResource(&res, "/api");
 
             try{

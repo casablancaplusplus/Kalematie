@@ -8,8 +8,8 @@ kalematieSession::kalematieSession(dbo::SqlConnectionPool& connectionPool)
 {
     setConnectionPool(connectionPool_);
     
-    mapClass<questions>("quote");
-    mapClass<choices>("author");
+    mapClass<quote>("quote");
+    mapClass<author>("author");
     mapClass<rating>("rating");
     mapClass<following>("following");
     mapClass<accessToken>("accessToken");
