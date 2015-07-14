@@ -75,7 +75,7 @@ class author {
                 dbo::field(a,   followers,  "followers");
                 dbo::field(a,   following,  "following");
 
-                dbo::hasMany(a, quotes, dbo::ManyToOne, "author");
+                dbo::hasMany(a, quotes, dbo::ManyToOne, "quotes");
             }
 };
 class rating {

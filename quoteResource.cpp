@@ -24,19 +24,19 @@ quoteResource::quoteResource(Wt::Dbo::SqlConnectionPool&    connectionPool,
              
                  std::string     _url = _request.pathInfo();
                 //check the request method
-                if(_request.method() == "get")
+                if(_request.method() == "GET")
                 {
                  initiateGet();
                 }
-                else if (_request.method() == "post")
+                else if (_request.method() == "POST")
                 {
                  initiatePost();   
                 }
-                else if (_request.method() == "put")
+                else if (_request.method() == "PUT")
                 {
                  initiatePut();   
                 }
-                else if (_request.method() == "delete")
+                else if (_request.method() == "DELETE")
                 {
                  initiateDelete();   
                 }
@@ -193,7 +193,7 @@ void    quoteResource::_invalidateAccessToken_() {
 }
 
 void    quoteResource::_createQuote_() {
-    error   urlError("Resource Not implemented yet", 20003);
+    error   urlError("Resource create quote Not implemented yet", 20003);
     urlError.putOut(_response);
 
 }
@@ -245,34 +245,18 @@ bool    quoteResource::authenticate() {
     }
     else
     {
-        std::string::size_type  pos;
-        if((pos=authString.find("Bearer"))!=std::string::npos)
+        if(authString.find("Bearer")!=std::string::npos)
         {
-            
-            // extract the access token
-            std::string     tokenStr;
-            std::string::const_iterator     it = authString.begin();
-            it = it + pos + 6;
+            tokenExtractor  tokenStr(authString);
 
-            for(;it != authString.end(); it++)
-            {
-                if((*it)!=' ')
-                {
-                     while((*(++it))!=' ' && it!=authString.end())
-                     {
-                         tokenStr+=*it;
-                     }
-                     it = authString.end();
-
-                }
-            }
-
+            if(!tokenStr.empty()) { 
             //check for the token in the db
             kalematieSession        session(_connectionPool);
             Wt::Dbo::Transaction    t(session);
             try {
                 Wt::Dbo::ptr<accessToken>       token =
-                    session.find<accessToken>().where("token = ?").bind(tokenStr); 
+                    session.find<accessToken>().where("token = ?")
+                    .bind(tokenStr.getTokenStr()); 
                 _role = token->role;
                 _authorId = token->userId;
 
@@ -283,6 +267,14 @@ bool    quoteResource::authenticate() {
                 tokenError.putOut(_response);
                 return false;
             }
+            }
+            else {
+
+                error tokenError("Invalid access token", 20006);
+                tokenError.putOut(_response);
+                return false;
+            }
+
 
                         
         }
@@ -295,6 +287,12 @@ bool    quoteResource::authenticate() {
                     || std::regex_match(_url.begin(), _url.end(), __invalidateAccessToken))
                 {
                     return true;
+                }
+                else
+                {
+                    error invalidReqErr("Basic token but invalid url or method",20005);
+                    invalidReqErr.putOut(_response);
+                    return false;
                 }
 
             }
@@ -351,5 +349,5 @@ std::regex      quoteResource::__getAuthorCollection = std::regex(
         "/authors?(idrange=[1-9][0-9]*-[1-9][0-9]*&)?(ratingrange=[0-9]{1}0*-[0-9]{1}0*)?", std::regex_constants::icase);
 
         
-
-
+std::regex      quoteResource::__tokenSearchReg = std::regex(
+        "[\\s]+", std::regex_constants::icase);

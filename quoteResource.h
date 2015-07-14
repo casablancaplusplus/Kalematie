@@ -2,6 +2,7 @@
 #define     _QUOTE_RESOURCE_H_
 
 #include "util/error.h"
+#include "util/tokenExtractor.h"
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
 
@@ -107,7 +108,7 @@ class quoteResource  {
         
         static  std::regex      __getAuthorCollection;
 
-        
-
+        // token search regex
+        static  std::regex      __tokenSearchReg;
 };
 #endif
