@@ -1,8 +1,9 @@
 #ifndef     _TOKEN_H_
 #define     _TOKEN_H_
 
-// This class takes care of creating an access token or invalidating it
+// This class takes care of creating an access token or invalidating it and registering users
 // It also contains the actual username and password
+// and
 
 class   token {
 
@@ -19,6 +20,9 @@ class   token {
         // that is taken in construction and if equal -> does the job and returns true
         // else -> return false
         bool     invalidateAccessToken(std::string   accessToken);
+        
+        // this function uses the username and password extracted by the Ctor and creates a new user in the db
+        bool    registerUser();
         
         // getters
         std::string     getUsername();
