@@ -16,7 +16,6 @@ class   quote {
 
     public:
 
-        int     id;
         std::string     text;
         Wt::WDate       date_published;
         float           rating;
@@ -27,7 +26,6 @@ class   quote {
         template<class Action>
             void    persist(Action& a)
             {
-                dbo::field(a,   id,     "id");
                 dbo::field(a,   text,   "text");
                 dbo::field(a,   date_published, "date_published");
                 dbo::field(a,   rating,         "rating");
@@ -48,7 +46,6 @@ class author {
             Vuest
         };
 
-        int     id;
         std::string     firstName;
         std::string     lastName;
         std::string     nickName;
@@ -65,7 +62,6 @@ class author {
         template<class  Action>
             void    persist(Action& a)
             {
-                dbo::field(a,   id,     "id");
                 dbo::field(a,   firstName,  "firstName");
                 dbo::field(a,   lastName,   "lastName");
                 dbo::field(a,   nickName,   "nickName");
