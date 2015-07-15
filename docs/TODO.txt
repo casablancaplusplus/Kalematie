@@ -1,3 +1,14 @@
 edit the blueprint -> the authors iformation to contain a role
 
 you where trying to figure out the Bearer stuff and a scheme for the db and the permissions 
+
+
+
+user regeistration :
+-----------------------------
+user registration is done via _addAuthor_() so the call to it should be when the token type is Bearer.
+
+
+one more thing : when the token type is Bearer, the client should not be able to call 
+/api/token
+/api/invalidate_token
