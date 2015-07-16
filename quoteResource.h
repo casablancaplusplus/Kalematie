@@ -3,6 +3,7 @@
 
 #include "util/error.h"
 #include "util/tokenExtractor.h"
+#include "util/bodyExtractor.h"
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
 

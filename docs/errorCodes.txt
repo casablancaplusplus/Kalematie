@@ -31,4 +31,16 @@
         <td>Invalid access token</td>
         <td>20006</td>
     </tr>
+    <tr>
+        <td>You don't have enough privilage to perform this operation</td>
+        <td>20007</td>
+    </tr>
+    <tr>
+        <td>The provided body is not well formed</td>
+        <td>20008</td>
+    </tr>
+    <tr>
+        <td>Could not retrieve this quote</td>
+        <td>20009</td>
+    </tr>
 </table>

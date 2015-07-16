@@ -193,8 +193,27 @@ void    quoteResource::_invalidateAccessToken_() {
 }
 
 void    quoteResource::_createQuote_() {
-    error   urlError("Resource create quote Not implemented yet", 20003);
-    urlError.putOut(_response);
+    //error   urlError("Resource create quote Not implemented yet", 20003);
+    //urlError.putOut(_response);
+    if(_role == author::role::Guest) 
+    {
+        error   privilageErr("You don't have enough privilage to perform this\
+                                operation",20007);
+        privilageErr.putOut(_response):
+    }
+    else
+    {
+        bodyExtractor   Body(_request);
+        if(!turnIntoJsonObj){
+            error   bodyErr("The provided body is not well formed",20008);
+            bodyErr.putOut();
+        }
+        else
+        {
+            
+        }
+    }
+        
 
 }
 
@@ -236,7 +255,36 @@ void    quoteResource::_deleteAuthor_() {
 
 
 bool    quoteResource::authenticate() {
-    
+    /*
+     * test code
+     * you used this code to add records to the tables
+     *
+
+            kalematieSession        session(_connectionPool);
+            Wt::Dbo::Transaction    t(session);
+            
+            accessToken     *aToken = new   accessToken();
+            aToken -> token = "accesstoken";
+            aToken -> userId= 1;
+            aToken -> role = author::Author;
+
+            author          *anAuthor = new author();
+            anAuthor -> firstName = "Nazar";
+            anAuthor -> lastName = "Abdolkhanie";
+            anAuthor -> nickName = "casablanca";
+            anAuthor -> phoneNumber = "09169211845";
+            anAuthor -> password = "secret";
+            anAuthor -> rating = 8.9;
+            anAuthor -> followers = 1232;
+            anAuthor -> following = 452;
+            anAuthor -> authorRole = author::Author;
+            
+            session.add(aToken);
+            session.add(anAuthor);
+
+
+    ********end**************/
+
     std::string     authString = _request.headerValue("Authorization");
     // TODO : do a size check for the value of the Authorization header
     if ( authString == "") {

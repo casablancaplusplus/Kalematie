@@ -9,8 +9,9 @@ namespace dbo = Wt::Dbo;
 class kalematieSession : public dbo::Session
 {
     public:
+        
         kalematieSession(dbo::SqlConnectionPool& connectionPool);
-
+        
         static dbo::SqlConnectionPool *createConnectionPool(
                 const std::string& sqlite3);
 

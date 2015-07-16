@@ -17,9 +17,10 @@ class   quote {
     public:
 
         std::string     text;
-        Wt::WDate       date_published;
-        float           rating;
-        int             viewers;
+        Wt::WDateTime       date_published;
+        float           rating = 0;
+        int             viewers = 1;
+        bool            verified = false;
 
         dbo::ptr<author>    Author;
 
@@ -43,18 +44,18 @@ class author {
             Administrator,
             Validator,
             Author,
-            Vuest
+            Guest
         };
 
         std::string     firstName;
         std::string     lastName;
         std::string     nickName;
-        int             phoneNumber;
+        std::string     phoneNumber;
         std::string     password;
         float           rating;
         int             followers; // the number of the followes
         int             following; // the number of the others this user 
-                                    // follows
+                                 // follows
         role            authorRole;
 
         dbo::collection< dbo::ptr<quote> >  quotes;
