@@ -8,12 +8,12 @@
 class   Author {
 
     public:
-        Quote(Wt::Dbo::SqlConnectionPool&   connectionPool);
-        
-        void            initWithAuthorId(int        authorId);
-        void            initWithNickName(std::sting nickName);
-        void            initWithPhoneNum(std::string    phoneNumber);
-        void            setDbPtr(dbo::ptr<author>&  ptr); // initialize using an existing ptr
+        Author(Wt::Dbo::SqlConnectionPool&   connectionPool);
+        ~Author();
+        bool            initWithAuthorId(int        authorId);
+        bool            initWithNickName(std::string nickName);
+        bool            initWithPhoneNum(std::string    phoneNumber);
+        bool            setDbPtr(dbo::ptr<author>&  ptr); // initialize using an existing ptr
 
         int             getId();
         std::string     getFirstName();
@@ -24,22 +24,24 @@ class   Author {
         float           getRating();
         int             getFollowers();
         int             getFollowing();
+
+        // do a manual null check for _dbPtr before calling this method
         author::role    getRole();
-        dbo::collection<dbo::ptr<quotes> >      getQuoteCollection();
-        dbo::ptr<author>    getDbPtr(); // returns the smart pointer itself
+        dbo::collection<dbo::ptr<quote> >      getQuoteCollection();
+        dbo::ptr<author>&    getDbPtr(); // returns the smart pointer itself
        
 
-        void            updateFirstName(std::string     firstname);
-        void            updateLastName(std::string      lastname);
-        void            updateNickName(std::string      nickname);
-        void            updatephoneNumber(std::string   phonenumber);
-        void            updatePassword(std::string      password);
-        void            updateRating(float              rating);
-        void            updateFollowers();
-        void            updateFollowing();
-        void            updateRole(author::role     Role);
+        bool            updateFirstName(std::string     firstname);
+        bool            updateLastName(std::string      lastname);
+        bool            updateNickName(std::string      nickname);
+        bool            updatePhoneNumber(std::string   phonenumber);
+        bool            updatePassword(std::string      password);
+        bool            updateRating();
+        bool            updateFollowers();
+        bool            updateFollowing();
+        bool            updateRole(author::role     Role);
 
-        void            commit(); // persists a new author or the modifications of an existing author
+        bool            commit(); // persists a new author or the modifications of an existing author
         
         void            initNewAuthor();
         void            setFirstName(std::string        firstname);

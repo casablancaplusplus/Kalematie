@@ -9,7 +9,7 @@ class   Quote {
     
     public:
         Quote(Wt::Dbo::SqlConnectionPool&   connectionPool);
-        
+        ~Quote(); 
         // these functions initialize dbPtr
         // these function should check if the dbPtr is iniated first
         bool            initWithQuoteId(int     quoteId);
@@ -22,7 +22,7 @@ class   Quote {
         int             getViewers();
         // do a manual null check for _dbPtr before using this method
         bool            getVerificationStatus();
-        dbo::ptr<author>&    getAuthor();
+        dbo::ptr<author>    getAuthor();
         dbo::ptr<quote>&     getDbPtr(); // returns the smart pointer itself
         
         bool            updateText(std::string  text);
@@ -32,11 +32,11 @@ class   Quote {
         bool            updateVerificationStatus(bool   tOrf);
         bool            updateAuthor(dbo::ptr<author>&  authorPtr);
 
-        void            commit(); // persists a new quote or the modifications of an existing quote
+        bool            commit(); // persists a new quote or the modifications of an existing quote
         
         void            initNewQuote();
         void            setText(std::string text);
-        void            setDatePublished(Wt::WDateTime  date);
+        void            setDatePublished(Wt::WDateTime&  date);
         void            setAuthor(dbo::ptr<author>  authorPtr);
         void            addQuote();
         

@@ -12,3 +12,7 @@ user registration is done via _addAuthor_() so the call to it should be when the
 one more thing : when the token type is Bearer, the client should not be able to call 
 /api/token
 /api/invalidate_token
+
+
+
+TODO : ask the wt community why Wt::Dbo::Transaction doesn't have an operator=() member

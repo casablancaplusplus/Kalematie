@@ -2,12 +2,13 @@
 
 
 Quote::Quote(Wt::Dbo::SqlConnectionPool&    connPool)
-    : _dbPtr(0),
+    : _dbPtr(),
     _session(connPool),
     _transaction(_session)
 
 {
 }
+Quote::~Quote() {}
 
 //Used to inialize the _dbPtr using the quotes id
 bool    Quote::initWithQuoteId(int  quoteId)
@@ -124,9 +125,9 @@ bool    Quote::setDbPtr(dbo::ptr<quote>&     ptr)
 
 int     Quote::getId() {
     // check if _dbPtr is null
-    if(_dbPtr) return 0;
+    if(_dbPtr) return -1;
     else
-        return _dbPtr->id();
+        return _dbPtr.id();
 }
 
 std::string     Quote::getText() {
@@ -138,19 +139,19 @@ std::string     Quote::getText() {
 
 Wt::WDateTime       Quote::getDatePublished() {
     // check if _dbPtr is null
-    if(_dbPtr) return 0;
+    if(_dbPtr) return  Wt::WDateTime();
     else
         _dbPtr -> date_published;
 }
 
 float   Quote::getRating() {
-    if(_dbPtr) return 0;
+    if(_dbPtr) return -1;
     else
         return _dbPtr -> rating;
 }
 
 int     Quote::getViewers() {
-    if(_dbPtr)  return 0;
+    if(_dbPtr)  return -1;
     else
         return _dbPtr -> viewers;
 }
@@ -159,8 +160,8 @@ bool    Quote::getVerificationStatus() {
     if(!_dbPtr) return _dbPtr->verified;
 }
 
-dbo::ptr<author>&   Quote::getAuthor() {
-    if(_dbPtr) return 0;
+dbo::ptr<author>   Quote::getAuthor() {
+    if(_dbPtr) return dbo::ptr<author>();
     else
         return _dbPtr -> Author;
 }
@@ -207,7 +208,7 @@ bool    Quote::updateText(std::string   _text) {
         return false;
 }
 
-bool    Quote::updateDatePublished(Wt:DateTime  date) {
+bool    Quote::updateDatePublished(Wt::WDateTime  date) {
 
     if(_dbPtr)
     {
@@ -274,7 +275,7 @@ bool    Quote::updateViewers() {
         {
             Wt::Dbo::Transaction    t(_session);
             try{
-                _dbPtr.modify() -> date_published = date;
+                _dbPtr.modify() -> viewers++;
                 t.commit();
                 return true;
             }catch(Wt::Dbo::Exception&  e){
@@ -327,7 +328,7 @@ bool    Quote::updateVerificationStatus(bool    tOrf) {
         return false;
 }
 
-bool    Quote::udpateAuthor(dbo::ptr<author>&   authorPtr) {
+bool    Quote::updateAuthor(dbo::ptr<author>&   authorPtr) {
 
 
     if(_dbPtr)
@@ -365,9 +366,19 @@ bool    Quote::udpateAuthor(dbo::ptr<author>&   authorPtr) {
         return false;
 }
 
-void    Quote::commit() {
-
-    _transaction.commit();
+bool    Quote::commit() {
+    
+    try {
+        if(_transaction.isActive()) std::cout << "\n\n\nIs Active\n\n\n" ;
+        _transaction.commit();
+        return true;
+    }catch(Wt::Dbo::Exception&  e) {
+        std::cout << e.what() << std::endl;
+        return false;
+    }catch(std::exception&  e) {
+        std::cout << e.what() << std::endl;
+        return false;
+    }
 
 }
 
@@ -381,13 +392,13 @@ void    Quote::setText(std::string  text) {
 
 }
 
-void    Quote::setDatePublished(Wt::WDateTime   date) {
+void    Quote::setDatePublished(Wt::WDateTime&   date) {
 
     newQuote_ -> date_published = date;
 
 }
 
-void    Quote:setAuthor(dbo::ptr<author>    authorPtr) {
+void    Quote::setAuthor(dbo::ptr<author>    authorPtr) {
     
     newQuote_ -> Author = authorPtr;
 

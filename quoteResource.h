@@ -6,8 +6,12 @@
 #include "util/bodyExtractor.h"
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
+#include "Author.h"
+#include "Quote.h"
+
 
 #include <regex>
+#include <ctime>
 
 #include <Wt/Dbo/SqlConnectionPool>
 

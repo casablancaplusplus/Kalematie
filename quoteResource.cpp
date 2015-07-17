@@ -199,18 +199,74 @@ void    quoteResource::_createQuote_() {
     {
         error   privilageErr("You don't have enough privilage to perform this\
                                 operation",20007);
-        privilageErr.putOut(_response):
+        privilageErr.putOut(_response);
     }
     else
     {
         bodyExtractor   Body(_request);
-        if(!turnIntoJsonObj){
+        if(!Body.turnIntoJsonObj()){
             error   bodyErr("The provided body is not well formed",20008);
-            bodyErr.putOut();
+            bodyErr.putOut(_response);
+            // dbug
+            std::cout << Body.getError().what() << std::endl;
         }
         else
         {
-            
+            Author      *author_ = new Author(_connectionPool);
+            if(author_->initWithAuthorId(_authorId))
+            {
+               Quote    *quote_ = new Quote(_connectionPool);
+               quote_->initNewQuote();
+
+               // retrieve the json body
+               Wt::Json::Object&    jBody = Body.getJsonObjBody();
+               Wt::Json::Value      jtext = jBody.get("text");
+               if(jtext.isNull() || jtext.type() != Wt::Json::Type::StringType)
+               {
+                    error   bodyErr("The provided body is not well formed",20008);
+                    bodyErr.putOut(_response);
+               }
+               else
+               {
+                    std::string     text = jtext;
+                    quote_->setText(text);
+                    quote_->setAuthor(author_->getDbPtr());
+                    
+                    // set the publish date
+                    Wt::WDateTime   *dt = new Wt::WDateTime();
+                    std::time_t     result = std::time(nullptr);
+                    dt->setTime_t(result);
+                    quote_->setDatePublished(*dt);
+
+                    // persist the quote
+                    quote_->addQuote();
+                    if(quote_->commit())
+                    {
+                        std::ostream&   out = _response.out();
+                        out << "{" << std::endl;
+                        out << "    \"errorMessage\":\"\"," << std::endl;
+                        out << "    \"errorCode\":0, " << std::endl;
+                        out << "    \"responseDate\":\"\"" << std::endl;
+                        out << "}" << std::endl;
+                    }
+                    else
+                    {
+                        error   err("Could not insert the new quote into the db",
+                                20011);
+                        err.putOut(_response);
+                    }
+
+               }
+      
+
+
+            }
+            else
+            {
+                error   err("The was a problem fetching the author with this id",
+                        20010);
+                err.putOut(_response);
+            }
         }
     }
         

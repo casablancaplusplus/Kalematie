@@ -71,6 +71,7 @@ class author {
                 dbo::field(a,   rating,     "rating");
                 dbo::field(a,   followers,  "followers");
                 dbo::field(a,   following,  "following");
+                dbo::field(a,   authorRole, "authorRole");
 
                 dbo::hasMany(a, quotes, dbo::ManyToOne, "Author");
             }

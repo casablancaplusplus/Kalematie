@@ -43,4 +43,12 @@
         <td>Could not retrieve this quote</td>
         <td>20009</td>
     </tr>
+    <tr>
+        <td>There was a problem fetching the author with this id</td>
+        <td>20010</td>
+    </tr>
+    <tr>
+        <td>Could not insert the new quote into the database </td>
+        <td>20011</td>
+    </tr>
 </table>
