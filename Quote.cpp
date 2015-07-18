@@ -371,6 +371,7 @@ bool    Quote::commit() {
     try {
         _transaction.commit();
         return true;
+    }catch(Wt::Dbo::Exception&  e) {
         std::cout << e.what() << std::endl;
         return false;
     }catch(std::exception&  e) {

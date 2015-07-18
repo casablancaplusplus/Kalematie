@@ -31,7 +31,7 @@ dbo::SqlConnectionPool  *kalematieSession::createConnectionPool(
 
     connection->setProperty("show-queries", "true");
     connection->setDateTimeStorage(Wt::Dbo::SqlDateTime,
-            Wt::Dbo::backend::Sqlite3::PseudoISO8601AsText);
+            Wt::Dbo::backend::Sqlite3::UnixTimeAsInteger);
 
     return new dbo::FixedSqlConnectionPool(connection, 10);
 }
