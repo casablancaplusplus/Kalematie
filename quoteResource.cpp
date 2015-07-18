@@ -231,7 +231,12 @@ void    quoteResource::_createQuote_() {
                     std::string     text = jtext;
                     quote_->setText(text);
                     quote_->setAuthor(author_->getDbPtr());
-                    
+
+                    // TODO check if the following line can be ommited
+                    // in other words, check if a transaction can be commited when
+                    // there's an active transaction on the same session and 
+                    // the transactions are not nested
+                    author_->commit();
                     // set the publish date
                     Wt::WDateTime   *dt = new Wt::WDateTime();
                     std::time_t     result = std::time(nullptr);
@@ -243,11 +248,18 @@ void    quoteResource::_createQuote_() {
                     if(quote_->commit())
                     {
                         std::ostream&   out = _response.out();
-                        out << "{" << std::endl;
-                        out << "    \"errorMessage\":\"\"," << std::endl;
-                        out << "    \"errorCode\":0, " << std::endl;
-                        out << "    \"responseDate\":\"\"" << std::endl;
-                        out << "}" << std::endl;
+                        
+                        typedef     Wt::Json::Object    WJO;
+                        typedef     Wt::Json::Value     WJV;
+
+                        WJO    resObj;
+                        
+                        resObj["errorMessage"] = WJV(std::string());
+                        resObj["errorCode"] = WJV(0);
+                        resObj["responseData"] = WJV(std::string());
+                        
+                        responseGenerator   resGen(resObj);
+                        resGen.putOut(_response);
                     }
                     else
                     {

@@ -16,7 +16,6 @@ bool    Author::initWithAuthorId(int    authorId)
    // {
         if(_transaction.isActive())
         {
-            std::cout << "I'm in is active" << std::endl;
             try{
                 _dbPtr = _session.find<author>().where("id = ? ").bind(authorId);
                 return true;

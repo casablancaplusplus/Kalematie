@@ -369,10 +369,8 @@ bool    Quote::updateAuthor(dbo::ptr<author>&   authorPtr) {
 bool    Quote::commit() {
     
     try {
-        if(_transaction.isActive()) std::cout << "\n\n\nIs Active\n\n\n" ;
         _transaction.commit();
         return true;
-    }catch(Wt::Dbo::Exception&  e) {
         std::cout << e.what() << std::endl;
         return false;
     }catch(std::exception&  e) {

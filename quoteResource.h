@@ -4,6 +4,7 @@
 #include "util/error.h"
 #include "util/tokenExtractor.h"
 #include "util/bodyExtractor.h"
+#include "util/responseGenerator.h"
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
 #include "Author.h"
@@ -12,9 +13,9 @@
 
 #include <regex>
 #include <ctime>
+#include <map>
 
 #include <Wt/Dbo/SqlConnectionPool>
-
 
 
 class quoteResource  {

@@ -7,8 +7,8 @@
         <option id="color.recent"><![CDATA[#ff3333]]></option>
     </view>
     <view id="resource-table">
-        <field id="0" name="Name" width="70" order="0"/>
-        <field id="1" name="Default role" width="29" order="1"/>
+        <field id="0" name="Name" width="56" order="0"/>
+        <field id="1" name="Default role" width="43" order="1"/>
     </view>
     <!-- -->
     <calendars>
@@ -36,6 +36,13 @@
         </taskproperties>
         <task id="0" name="issue#1" color="#ff3333" meeting="false" start="2015-07-14" duration="1" complete="100" expand="true">
             <notes><![CDATA[The problem is that with the the references to Wt::Http::Request and Response are not initialized till the function handleRequest is called but this is not allowed in C++ and the references should be initialized on construction]]></notes>
+        </task>
+        <task id="1" name="issue#2" color="#8cb6ce" meeting="false" start="2015-07-13" duration="1" complete="0" expand="true">
+            <notes><![CDATA[fix the date field of the quotes
+]]></notes>
+        </task>
+        <task id="3" name="issue#3" color="#8cb6ce" meeting="false" start="2015-07-13" duration="1" complete="0" expand="true">
+            <notes><![CDATA[It looks like in every transaction the app tries to create the tables again and this might not be efficient. fix it]]></notes>
         </task>
     </tasks>
     <resources/>
