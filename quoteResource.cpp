@@ -193,8 +193,7 @@ void    quoteResource::_invalidateAccessToken_() {
 }
 
 void    quoteResource::_createQuote_() {
-    //error   urlError("Resource create quote Not implemented yet", 20003);
-    //urlError.putOut(_response);
+    
     if(_role == author::role::Guest) 
     {
         error   privilageErr("You don't have enough privilage to perform this\
@@ -249,8 +248,6 @@ void    quoteResource::_createQuote_() {
                     {
                         std::ostream&   out = _response.out();
                         
-                        typedef     Wt::Json::Object    WJO;
-                        typedef     Wt::Json::Value     WJV;
 
                         WJO    resObj;
                         
@@ -286,9 +283,92 @@ void    quoteResource::_createQuote_() {
 }
 
 void    quoteResource::_postRating_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
 
+    if(_role == author::role::Guest) 
+    {
+        error   privilageErr("You don't have enough privilage to perform this\
+                                operation",20007);
+        privilageErr.putOut(_response);
+    }
+    else
+    {
+        urlAnalyzer uAnal(_request.pathInfo());
+        std::vector<std::string>    urlVec = uAnal.getResult();
+        int     quoteId = std::stoi(urlVec[1]);
+        Quote   *quote_ = new Quote(_connectionPool);
+        if(!quote_->initWithQuoteId(quoteId))
+        {
+            error   err("No such resource", 20002);
+            err.putOut(_response);
+        }
+        else
+        {
+            bodyExtractor   Body(_request);
+            if(!Body.turnIntoJsonObj())
+            {
+                error   err("The provided body is not well formed",20008);
+                err.putOut(_response);
+            }
+            else
+            {
+                Wt::Json::Object&   jBody = Body.getJsonObjBody();
+                Wt::Json::Value     jVal = jBody.get("rating");
+                
+                if(
+                        jVal.isNull() 
+                        ||jVal.type() != Wt::Json::NumberType
+                //        || (rating > 10.0)
+                 //       || (rating < 0.0)
+                  )
+                {
+                    error   err("The provided body is not well formed",20008);
+                    err.putOut(_response);
+                }
+                else
+                {
+                    double       rating = jVal;
+                    if((rating > 10.0)|| (rating < 0.0))
+                    {
+                        error err ("The provided body is not well formed",20008);
+                        err.putOut(_response);
+                    }
+                    else if(quote_->getAuthor().id() == _authorId) 
+                    {
+                         error   err("You don't have enough privilage to perform\
+                                    this operation",20007);
+                         err.putOut(_response);
+
+                    }
+                    else
+                    {
+
+                    quote_->commit();
+
+                    Rating      *rating_=new Rating(_connectionPool);
+                    rating_->initNewRating();
+                    rating_->setQuoteId(quoteId);
+                    rating_->setRaterId(_authorId);
+                    rating_->setRating(rating);
+                    rating_->addRating();
+
+                    rating_->commit();
+
+                    quote_->updateRating();
+
+                    WJO    resObj;
+                        
+                    resObj["errorMessage"] = WJV(std::string());
+                    resObj["errorCode"] = WJV(0);
+                    resObj["responseData"] = WJV(std::string());
+                     
+                    responseGenerator   resGen(resObj);
+                    resGen.putOut(_response);
+                    }
+ 
+                }
+            }
+        }
+    }
 }
 
 void    quoteResource::_addAuthor_() {

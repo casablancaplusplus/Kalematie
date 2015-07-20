@@ -5,10 +5,14 @@
 #include "util/tokenExtractor.h"
 #include "util/bodyExtractor.h"
 #include "util/responseGenerator.h"
+#include "util/urlAnalyzer.h"
+
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
+
 #include "Author.h"
 #include "Quote.h"
+#include "Rating.h"
 
 
 #include <regex>
@@ -17,6 +21,8 @@
 
 #include <Wt/Dbo/SqlConnectionPool>
 
+typedef     Wt::Json::Object    WJO;
+typedef     Wt::Json::Value     WJV;
 
 class quoteResource  {
         

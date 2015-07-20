@@ -14,8 +14,8 @@ Quote::~Quote() {}
 bool    Quote::initWithQuoteId(int  quoteId)
 {
 
-    if(_dbPtr)
-    {
+    //if(_dbPtr)
+    //{
         if(_transaction.isActive())
         {
             try{
@@ -43,9 +43,9 @@ bool    Quote::initWithQuoteId(int  quoteId)
                 return false;
             }
         }
-    }
-    else
-        return false;
+   // }
+   // else
+    //    return false;
 
 
 }
