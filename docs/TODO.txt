@@ -16,3 +16,6 @@ one more thing : when the token type is Bearer, the client should not be able to
 
 
 TODO : ask the wt community why Wt::Dbo::Transaction doesn't have an operator=() member
+
+
+report the bug of the Wt::Dbo::ptr<C>::operator bool() bug : it it functions on the underying pointer and returns false in case of a null object -> reverse of the documentation

@@ -12,7 +12,7 @@ Author::Author(Wt::Dbo::SqlConnectionPool&  connectionPool)
 Author::~Author() {}
 bool    Author::initWithAuthorId(int    authorId)
 {
-    //if(_dbPtr)
+    //if(!_dbPtr.get())
    // {
         if(_transaction.isActive())
         {
@@ -48,7 +48,7 @@ bool    Author::initWithAuthorId(int    authorId)
 
 bool    Author::initWithNickName(std::string    nickName)
 {
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -85,7 +85,7 @@ bool    Author::initWithNickName(std::string    nickName)
 
 bool    Author::initWithPhoneNum(std::string    phoneNum)
 {
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -123,7 +123,7 @@ bool    Author::initWithPhoneNum(std::string    phoneNum)
 bool    Author::setDbPtr(dbo::ptr<author>&  ptr) 
 {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -159,42 +159,42 @@ bool    Author::setDbPtr(dbo::ptr<author>&  ptr)
 
 int     Author::getId() {
     // check if _dbPtr is null
-    if(_dbPtr) return 0;
+    if(!_dbPtr.get()) return 0;
     else
         return _dbPtr.id();
 }
 
 std::string     Author::getFirstName() {
 
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr->firstName;
 }
 
 std::string     Author::getLastName() {
 
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr->lastName;
 }
 
 std::string     Author::getNickName() {
 
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr-> nickName;
 }
 
 std::string     Author::getPhoneNumber() {
 
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr->phoneNumber;
 }
 
 std::string     Author::getPassword() {
 
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr->password;
 
@@ -202,20 +202,20 @@ std::string     Author::getPassword() {
 
 float       Author::getRating() {
     
-    if(_dbPtr) return  -1;
+    if(!_dbPtr.get()) return  -1;
     else
         return _dbPtr->rating;
 }
 
 int         Author::getFollowers() {
 
-    if(_dbPtr) return -1;
+    if(!_dbPtr.get()) return -1;
     else
         return  _dbPtr->followers;
 }
    
 int         Author::getFollowing() {
-    if(_dbPtr) return -1;
+    if(!_dbPtr.get()) return -1;
     else
         return _dbPtr->following;
 }
@@ -227,7 +227,7 @@ author::role    Author::getRole() {
 dbo::collection<dbo::ptr<quote> >   Author::getQuoteCollection() {
 
     // if _dbPtr is null return an empty collection
-    if(_dbPtr)  return  dbo::collection<dbo::ptr<quote> >();
+    if(!_dbPtr.get())  return  dbo::collection<dbo::ptr<quote> >();
     else
         return  _dbPtr -> quotes;
 }
@@ -240,7 +240,7 @@ dbo::ptr<author>&    Author::getDbPtr(){
 bool    Author::updateFirstName(std::string     firstname) {
     
     
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -277,7 +277,7 @@ bool    Author::updateFirstName(std::string     firstname) {
 
 bool    Author::updateLastName(std::string      lastname) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -314,7 +314,7 @@ bool    Author::updateLastName(std::string      lastname) {
 
 bool    Author::updateNickName(std::string      nickname) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -351,7 +351,7 @@ bool    Author::updateNickName(std::string      nickname) {
 
 bool    Author::updatePhoneNumber(std::string   phonenum) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -389,7 +389,7 @@ bool    Author::updatePhoneNumber(std::string   phonenum) {
 bool    Author::updatePassword(std::string  _password) {
 
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -435,7 +435,7 @@ bool    Author::updateRating() {
 
 bool    Author::updateFollowers() {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -473,7 +473,7 @@ bool    Author::updateFollowers() {
 
 bool    Author::updateFollowing() {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -511,7 +511,7 @@ bool    Author::updateFollowing() {
 bool    Author::updateRole(author::role     Role) {
 
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {

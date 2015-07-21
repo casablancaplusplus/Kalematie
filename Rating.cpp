@@ -166,7 +166,7 @@ void    Rating::setDbPtrCollection(rPtrCollection&  ptrColl)
 }
 
 float   Rating::getRating(dbo::ptr<rating>& ptr) {
-    if(!ptr)    return  ptr->rating;
+    if(ptr.get())    return  ptr->rating;
 }
 
 std::vector<float>  Rating::getRatings() {

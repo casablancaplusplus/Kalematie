@@ -14,7 +14,7 @@ Quote::~Quote() {}
 bool    Quote::initWithQuoteId(int  quoteId)
 {
 
-    //if(_dbPtr)
+    //if(!_dbPtr.get())
     //{
         if(_transaction.isActive())
         {
@@ -52,7 +52,7 @@ bool    Quote::initWithQuoteId(int  quoteId)
 
 bool    Quote::initWithQuoteText(std::string    text)
 {
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -89,7 +89,7 @@ bool    Quote::initWithQuoteText(std::string    text)
 bool    Quote::setDbPtr(dbo::ptr<quote>&     ptr)
 {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -125,33 +125,33 @@ bool    Quote::setDbPtr(dbo::ptr<quote>&     ptr)
 
 int     Quote::getId() {
     // check if _dbPtr is null
-    if(_dbPtr) return -1;
+    if(!_dbPtr.get()) return -1;
     else
         return _dbPtr.id();
 }
 
 std::string     Quote::getText() {
     // check if _dbPtr is null
-    if(_dbPtr) return "";
+    if(!_dbPtr.get()) return "";
     else
         return _dbPtr->text;
 }
 
 Wt::WDateTime       Quote::getDatePublished() {
     // check if _dbPtr is null
-    if(_dbPtr) return  Wt::WDateTime();
+    if(!_dbPtr.get()) return  Wt::WDateTime();
     else
         _dbPtr -> date_published;
 }
 
 float   Quote::getRating() {
-    if(_dbPtr) return -1;
+    if(!_dbPtr.get()) return -1;
     else
         return _dbPtr -> rating;
 }
 
 int     Quote::getViewers() {
-    if(_dbPtr)  return -1;
+    if(!_dbPtr.get())  return -1;
     else
         return _dbPtr -> viewers;
 }
@@ -161,9 +161,14 @@ bool    Quote::getVerificationStatus() {
 }
 
 dbo::ptr<author>   Quote::getAuthor() {
-    if(_dbPtr) return dbo::ptr<author>();
-    else
-        return _dbPtr -> Author;
+       try { 
+
+            return _dbPtr -> Author;
+
+       }catch(Wt::Dbo::Exception&   e) {
+           std::cout << e.what() << std::endl;
+           return dbo::ptr<author>();
+       }
 }
 
 dbo::ptr<quote>&    Quote::getDbPtr() {
@@ -173,7 +178,7 @@ dbo::ptr<quote>&    Quote::getDbPtr() {
 
 bool    Quote::updateText(std::string   _text) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -210,7 +215,7 @@ bool    Quote::updateText(std::string   _text) {
 
 bool    Quote::updateDatePublished(Wt::WDateTime  date) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -256,7 +261,7 @@ bool    Quote::updateRating() {
 bool    Quote::updateViewers() {
 
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -293,7 +298,7 @@ bool    Quote::updateViewers() {
 
 bool    Quote::updateVerificationStatus(bool    tOrf) {
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -331,7 +336,7 @@ bool    Quote::updateVerificationStatus(bool    tOrf) {
 bool    Quote::updateAuthor(dbo::ptr<author>&   authorPtr) {
 
 
-    if(_dbPtr)
+    if(!_dbPtr.get())
     {
         if(_transaction.isActive())
         {

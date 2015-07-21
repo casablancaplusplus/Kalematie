@@ -327,17 +327,23 @@ void    quoteResource::_postRating_() {
                 else
                 {
                     double       rating = jVal;
+                    dbo::ptr<author>    auth = quote_->getAuthor();
                     if((rating > 10.0)|| (rating < 0.0))
                     {
                         error err ("The provided body is not well formed",20008);
                         err.putOut(_response);
                     }
-                    else if(quote_->getAuthor().id() == _authorId) 
+                    else if(!auth.get()) 
                     {
-                         error   err("You don't have enough privilage to perform\
-                                    this operation",20007);
+                         error   err("No such resource",20002);
                          err.putOut(_response);
 
+                    }
+                    else if( auth.id() == _authorId)
+                    {
+                        error   err("You don't have enough privilage to perform\
+                                    this operation",20007);
+                         err.putOut(_response);
                     }
                     else
                     {
