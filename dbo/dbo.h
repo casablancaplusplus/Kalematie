@@ -18,7 +18,7 @@ class   quote {
 
         std::string     text;
         Wt::WDateTime       date_published;
-        float           rating = 0;
+        double           rating = -1;
         int             viewers = 1;
         bool            verified = false;
 
@@ -52,7 +52,7 @@ class author {
         std::string     nickName;
         std::string     phoneNumber;
         std::string     password;
-        float           rating;
+        double           rating;
         int             followers; // the number of the followes
         int             following; // the number of the others this user 
                                  // follows
@@ -81,7 +81,7 @@ class rating {
     public:
         int     quoteId;
         int     raterId; // the id of the user who rated
-        float   rating;
+        double   rating;
 
         template<class Action>
             void    persist(Action& a)

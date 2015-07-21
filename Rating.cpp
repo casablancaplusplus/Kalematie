@@ -106,7 +106,7 @@ bool    Rating::initWithQuoteId(int     quoteId)
     }
 }
 
-bool    Rating::initWithRating(float    _rating)
+bool    Rating::initWithRating(double    _rating)
 {
 
     if(_transaction.isActive())
@@ -165,15 +165,15 @@ void    Rating::setDbPtrCollection(rPtrCollection&  ptrColl)
     }
 }
 
-float   Rating::getRating(dbo::ptr<rating>& ptr) {
+double   Rating::getRating(dbo::ptr<rating>& ptr) {
     if(ptr.get())    return  ptr->rating;
 }
 
-std::vector<float>  Rating::getRatings() {
+std::vector<double>  Rating::getRatings() {
 
     if(_dbPtrCollection.size() != 0)
     {
-        std::vector<float>  ratingsVec;
+        std::vector<double>  ratingsVec;
         for(rPtrCollection::iterator  it = _dbPtrCollection.begin();
                 it != _dbPtrCollection.end(); it++)
         {
@@ -182,7 +182,7 @@ std::vector<float>  Rating::getRatings() {
     }
     else
     {
-        return  std::vector<float>();
+        return  std::vector<double>();
     }
 }
 
@@ -259,7 +259,7 @@ void    Rating::setRaterId(int  _raterId) {
     newRating_-> raterId = _raterId;
 }
 
-void    Rating::setRating(float _rating) {
+void    Rating::setRating(double _rating) {
 
     newRating_-> rating = _rating;
 }

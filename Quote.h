@@ -3,7 +3,10 @@
 
 #include "dbo/dbo.h"
 #include "dbo/kalematieSession.h"
+#include "Rating.h"
+
 #include <Wt/Dbo/SqlConnectionPool>
+
 
 class   Quote {
     
@@ -18,7 +21,7 @@ class   Quote {
         int             getId();
         std::string     getText();
         Wt::WDateTime   getDatePublished();
-        float           getRating();
+        double           getRating();
         int             getViewers();
         // do a manual null check for _dbPtr before using this method
         bool            getVerificationStatus();
@@ -48,7 +51,7 @@ class   Quote {
         // database yet
         quote       *newQuote_;
 
-        //Wt::Dbo::SqlConnectionPool&     _connectionPool;
+        Wt::Dbo::SqlConnectionPool&     _connectionPool;
         kalematieSession                _session;
         Wt::Dbo::Transaction            _transaction;
 

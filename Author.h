@@ -21,7 +21,7 @@ class   Author {
         std::string     getNickName();
         std::string     getPhoneNumber();
         std::string     getPassword();
-        float           getRating();
+        double           getRating();
         int             getFollowers();
         int             getFollowing();
 

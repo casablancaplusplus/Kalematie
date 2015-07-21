@@ -200,7 +200,7 @@ std::string     Author::getPassword() {
 
 }
 
-float       Author::getRating() {
+double       Author::getRating() {
     
     if(!_dbPtr.get()) return  -1;
     else
