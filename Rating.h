@@ -25,14 +25,14 @@ class   Rating {
 
         bool        initWithRaterId(int raterId);
         bool        initWithQuoteId(int quoteId);
-        bool        initWithRating(float    rating);
+        bool        initWithRating(double    rating);
         void        setDbPtr(dbo::ptr<rating>&  ptr);
         void        setDbPtrCollection(rPtrCollection&  ptrColl);
         
         //int         getQuoteId();
         //int         getRaterId();
-        float       getRating(dbo::ptr<rating>& ptr);
-        std::vector<float>  getRatings();
+        double       getRating(dbo::ptr<rating>& ptr);
+        std::vector<double>  getRatings();
         dbo::ptr<rating>&   getDbPtr();
         dbo::collection<dbo::ptr<rating> >  getDbPtrCollection();
         
@@ -44,7 +44,7 @@ class   Rating {
         void        initNewRating();
         void        setQuoteId(int  quoteId);
         void        setRaterId(int  raterId);
-        void        setRating(float rating);
+        void        setRating(double rating);
         
         void        addRating();
 

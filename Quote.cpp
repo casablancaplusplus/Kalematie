@@ -3,6 +3,7 @@
 
 Quote::Quote(Wt::Dbo::SqlConnectionPool&    connPool)
     : _dbPtr(),
+    _connectionPool(connPool),
     _session(connPool),
     _transaction(_session)
 
@@ -144,7 +145,7 @@ Wt::WDateTime       Quote::getDatePublished() {
         _dbPtr -> date_published;
 }
 
-float   Quote::getRating() {
+double   Quote::getRating() {
     if(!_dbPtr.get()) return -1;
     else
         return _dbPtr -> rating;
@@ -251,12 +252,102 @@ bool    Quote::updateDatePublished(Wt::WDateTime  date) {
 }
 
 bool    Quote::updateRating() {
-   
-    std::cout << "NOT IMPLEMENTED : update Overall rating is not implemented yet" <<std::endl;
-    // TODO implement this later
-    return false;
+  
+    if(!_dbPtr.get())
+    {
+        if(_transaction.isActive())
+        {
+            try{
+                Rating      *rating_ = new Rating(_connectionPool);
+                rating_-> initWithQuoteId(_dbPtr.id());
+                std::vector<double>     ratings = rating_-> getRatings();
+                rating_->commit();
+                if(ratings.empty())
+                {
+                    _dbPtr.modify() -> rating = -1;
+                    return true;
+                }
+                else
+                {
+                    std::map<double, int>   ratingMap;
+                    for(double  d = 0.0; d <= 10.0; d+=0.1)
+                        ratingMap[d] = 0;
 
+                    for(std::vector<double>::const_iterator it = ratings.begin();
+                            it != ratings.end(); it++)
+                        ratingMap[*it]++;
+
+                    int wAll = 0;
+                    double  wSum = 0.0;
+                    for(const auto &pair : ratingMap)
+                        if(pair.second != 0)
+                        {
+                            wAll++;
+                            wSum += pair.first * pair.second;
+                        }
+                    double  result = wSum/wAll;
+
+                    _dbPtr.modify() -> rating = result;
+                    return true;
+                }
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateRating()" << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            Wt::Dbo::Transaction    t(_session);
+            try{
+                Rating      *rating_ = new Rating(_connectionPool);
+                rating_-> initWithQuoteId(_dbPtr.id());
+                std::vector<double>     ratings = rating_-> getRatings();
+                rating_->commit();
+                if(ratings.empty())
+                {
+                    _dbPtr.modify() -> rating = -1;
+                    return true;
+                }
+                else
+                {
+                    std::map<double, int>   ratingMap;
+                    for(double  d = 0.0; d <= 10.0; d+=0.1)
+                        ratingMap[d] = 0;
+
+                    for(std::vector<double>::const_iterator it = ratings.begin();
+                            it != ratings.end(); it++)
+                        ratingMap[*it]++;
+
+                    int wAll = 0;
+                    double  wSum = 0.0;
+                    for(const auto &pair : ratingMap)
+                        if(pair.second != 0)
+                        {
+                            wAll++;
+                            wSum += pair.first * pair.second;
+                        }
+                    double  result = wSum/wAll;
+
+                    _dbPtr.modify() -> rating = result;
+                    t.commit();
+                    return true;
+                }
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateRating()" << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+        return false;
 }
+
 
 bool    Quote::updateViewers() {
 
