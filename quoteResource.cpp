@@ -152,9 +152,32 @@ void    quoteResource::initiateDelete() {
 }
 
 void    quoteResource::_getQuoteRating_() {
+    
+        urlAnalyzer uAnal(_request.pathInfo());
+        std::vector<std::string>    urlVec = uAnal.getResult();
+        int     quoteId = std::stoi(urlVec[1]);
+        Quote   *quote_ = new Quote(_connectionPool);
+        if(!quote_->initWithQuoteId(quoteId))
+        {
+            error   err("No such resource", 20002);
+            err.putOut(_response);
+        }
+        else
+        {
+            
+            WJO resObj;
 
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
+            resObj["errorMessage"] = WJV(std::string());
+            resObj["errorCode"] = WJV(0);
+            
+            resObj["responseData"] = WJV(Wt::Json::ObjectType);
+            WJO& resData = resObj["responseData"];
+            resData["rating"] = WJV(quote_->getRating());
+
+            responseGenerator       resGen(resObj);
+            resGen.putOut(_response);
+
+        }
 }
 
 void    quoteResource::_getQuote_() {
@@ -360,7 +383,8 @@ void    quoteResource::_postRating_() {
                     rating_->commit();
 
                     quote_->updateRating();
-
+                    
+                    
                     WJO    resObj;
                         
                     resObj["errorMessage"] = WJV(std::string());
