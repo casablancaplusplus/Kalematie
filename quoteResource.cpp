@@ -155,7 +155,18 @@ void    quoteResource::_getQuoteRating_() {
     
         urlAnalyzer uAnal(_request.pathInfo());
         std::vector<std::string>    urlVec = uAnal.getResult();
-        int     quoteId = std::stoi(urlVec[1]);
+        int     quoteId = 0;
+        try {
+
+             quoteId = std::stoi(urlVec[1]);
+        } catch(std::exception& e) {
+
+            std::cout << e.what() << std::endl;
+
+        } catch(...) {
+            std::cout << "Error : There was a problem with the provided \
+                quote id " << std::endl;
+        }
         Quote   *quote_ = new Quote(_connectionPool);
         if(!quote_->initWithQuoteId(quoteId))
         {
@@ -178,6 +189,8 @@ void    quoteResource::_getQuoteRating_() {
             resGen.putOut(_response);
 
         }
+        quote_-> commit();
+        
 }
 
 void    quoteResource::_getQuote_() {

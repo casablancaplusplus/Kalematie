@@ -179,6 +179,7 @@ std::vector<double>  Rating::getRatings() {
         {
             ratingsVec.push_back(getRating((*it)));
         }
+        return ratingsVec;
     }
     else
     {

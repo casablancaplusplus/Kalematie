@@ -21,7 +21,9 @@ bool    Quote::initWithQuoteId(int  quoteId)
         {
             try{
                 _dbPtr = _session.find<quote>().where("id = ? ").bind(quoteId);
-                return true;
+                if(_dbPtr.get())
+                    return true;
+                else return false;
             }catch(Wt::Dbo::Exception&  e){
                 std::cout << e.what() << std::endl;
                 return false;
@@ -146,6 +148,7 @@ Wt::WDateTime       Quote::getDatePublished() {
 }
 
 double   Quote::getRating() {
+ 
     if(!_dbPtr.get()) return -1;
     else
         return _dbPtr -> rating;
@@ -253,7 +256,7 @@ bool    Quote::updateDatePublished(Wt::WDateTime  date) {
 
 bool    Quote::updateRating() {
   
-    if(!_dbPtr.get())
+    if(_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -463,7 +466,8 @@ bool    Quote::updateAuthor(dbo::ptr<author>&   authorPtr) {
 }
 
 bool    Quote::commit() {
-    
+    if(_transaction.isActive())
+    {
     try {
         _transaction.commit();
         return true;
@@ -474,6 +478,9 @@ bool    Quote::commit() {
         std::cout << e.what() << std::endl;
         return false;
     }
+    }
+    else
+        return true; // suspicious
 
 }
 
