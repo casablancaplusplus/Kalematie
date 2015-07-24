@@ -421,10 +421,76 @@ void    quoteResource::_addAuthor_() {
 }
 
 void    quoteResource::_modifyQuote_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
-
+    
+   if(_role == author::role::Guest || _role == author::role::Validator)
+   {
+       error pError("You don't have enough privilage to perform this\
+               operation", 20007);
+       pError.putOut(_response);
+   }
+   else
+   {
+       urlAnalyzer  uAnal(_request.pathInfo());
+       std::vector<std::string>     urlVec = uAnal.getResult();
+       int      quoteId = 0;
+       try {
+       
+           quoteId = std::stoi(urlVec[1]);
+       }catch(std::exception&   e) {
+           std::cout << e.what() << std::endl;
+       }catch(...) {
+           std::cout << "Error : something wrong with the quote id" << std::endl;
+       }
+       Quote    *quote_ = new Quote(_connectionPool);
+       if(!quote_->initWithQuoteId(quoteId))
+       {
+           error err("No such resource", 20002);
+           err.putOut(_response);
+       }
+       else
+       {
+           if(quote_->getAuthor().id() == _authorId ||
+                   _role == author::role::Administrator )
+           {
+               bodyExtractor    Body(_request);
+               if(!Body.turnIntoJsonObj()) {
+                   error    bodyErr("The provided body is not well formed",
+                           20008);
+                   bodyErr.putOut(_response);
+               }
+               else {
+                   Wt::Json::Object&    jBody = Body.getJsonObjBody();
+                   Wt::Json::Value      jText = jBody.get("text");
+                   if(jText.isNull() 
+                           || jText.type() != Wt::Json::Type::StringType)
+                   {
+                       error    bodyErr("The provided body is not well formed",
+                               20008);
+                       bodyErr.putOut(_response);
+                   }
+                   else
+                   {
+                       std::string  text = jText;
+                       quote_->updateText(text);
+                       quote_->updateVerificationStatus(false);
+                       quote_->commit();
+                        
+                       responseGenerator    resGen;
+                       resGen.putOut(_response, true);
+                   }
+               }
+           }
+           else
+           {
+               error pError("You don't have enough privilage to perform this\
+               operation", 20007);
+               pError.putOut(_response);
+           }
+       }
+   }
 }
+
+
 
 void    quoteResource::_modifyAuthor_() {
     error   urlError("Resource Not implemented yet", 20003);

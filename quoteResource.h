@@ -50,8 +50,8 @@ class quoteResource  {
          */
 
         // the GET group
-        void    _getQuoteRating_();
-        void    _getQuote_();
+        void    _getQuoteRating_(); // implemented
+        void    _getQuote_(); // planned
         void    _getQuoteCollection_();
         void    _getAuthor_();
         void    _getAuthorCollection_();
@@ -60,18 +60,18 @@ class quoteResource  {
         void    _getAccessToken_();         // security layer 
         void    _invalidateAccessToken_();  // security layer
 
-        void    _createQuote_();
-        void    _postRating_();
+        void    _createQuote_(); // implemented
+        void    _postRating_(); // implemented
         void    _addAuthor_();
 
 
         // the PUT group
-        void    _modifyQuote_();
+        void    _modifyQuote_();  // planned
         void    _modifyAuthor_();
 
         // the DELETE group
-        void    _deleteQuote_();
-        void    _deleteAuthor_();
+        void    _deleteQuote_();  // planned
+        void    _deleteAuthor_(); // planned
 
     private:
         
