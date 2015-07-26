@@ -194,9 +194,45 @@ void    quoteResource::_getQuoteRating_() {
 }
 
 void    quoteResource::_getQuote_() {
+   
+    urlAnalyzer     uAnal(_request.pathInfo());
+    std::vector<std::string>    urlVec = uAnal.getResult();
+    int     quoteId = 0;
+    try {
+        quoteId = std::stoi(urlVec[1]);
+    }catch(std::exception&  e) {
 
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
+        std::cout << e.what() << std::endl;
+    }catch(...) {
+        std::cout << "Error : There was a problem with the provided \
+            quote id " << std::endl;
+    }
+    Quote   *quote_ = new Quote(_connectionPool);
+    if(!quote_->initWithQuoteId(quoteId))
+    {
+        error err ("No such resource", 20002);
+        err.putOut(_response);
+    }
+    else
+    {
+        WJO resObj;
+        resObj["errorMessage"] = WJV(std::string());
+        resObj["errorCode"] = WJV(0);
+
+        resObj["responseData"] = WJV(Wt::Json::ObjectType);
+        WJO&    resData = resObj["responseData"];
+        resData["id"] = WJV(quote_->getId());
+        resData["text"] = WJV(quote_->getText());
+        resData["author_id"] = WJV(quote_->getAuthor().id());
+        std::string   timeStr = quote_->getDatePublished();
+        resData["date_published"]= WJV(Wt::WString::fromUTF8(timeStr));
+        resData["rating"]= WJV(quote_->getRating());
+        resData["viewers"] = WJV(quote_->getViewers());
+
+        responseGenerator   resGen(resObj);
+        resGen.putOut(_response);
+    }
+
 }
 
 void    quoteResource::_getQuoteCollection_() {
@@ -273,10 +309,10 @@ void    quoteResource::_createQuote_() {
                     // the transactions are not nested
                     author_->commit();
                     // set the publish date
-                    Wt::WDateTime   *dt = new Wt::WDateTime();
-                    std::time_t     result = std::time(nullptr);
-                    dt->setTime_t(result);
-                    quote_->setDatePublished(*dt);
+                    std::time_t     timeT = std::chrono::system_clock::to_time_t(
+                            std::chrono::system_clock::now());
+                    std::string     strTime = std::to_string(timeT);
+                    quote_->setDatePublished(strTime);
 
                     // persist the quote
                     quote_->addQuote();

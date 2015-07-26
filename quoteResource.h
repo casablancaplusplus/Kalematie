@@ -17,9 +17,11 @@
 
 #include <regex>
 #include <ctime>
+#include <chrono>
 #include <map>
 
 #include <Wt/Dbo/SqlConnectionPool>
+#include <Wt/WLocalDateTime>
 
 typedef     Wt::Json::Object    WJO;
 typedef     Wt::Json::Value     WJV;

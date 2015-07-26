@@ -20,8 +20,8 @@ class   Quote {
         bool            setDbPtr(dbo::ptr<quote>&   ptr); // initialize using an existing ptr
         int             getId();
         std::string     getText();
-        Wt::WDateTime   getDatePublished();
-        double           getRating();
+        std::string     getDatePublished();
+        double          getRating();
         int             getViewers();
         // do a manual null check for _dbPtr before using this method
         bool            getVerificationStatus();
@@ -29,7 +29,7 @@ class   Quote {
         dbo::ptr<quote>&     getDbPtr(); // returns the smart pointer itself
         
         bool            updateText(std::string  text);
-        bool            updateDatePublished(Wt::WDateTime   date);
+        bool            updateDatePublished(std::string&   date);
         bool            updateRating();// this is the overall rating of a quote
         bool            updateViewers();
         bool            updateVerificationStatus(bool   tOrf);
@@ -39,7 +39,7 @@ class   Quote {
         
         void            initNewQuote();
         void            setText(std::string text);
-        void            setDatePublished(Wt::WDateTime&  date);
+        void            setDatePublished(std::string&  date);
         void            setAuthor(dbo::ptr<author>  authorPtr);
         void            addQuote();
         

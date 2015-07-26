@@ -140,11 +140,12 @@ std::string     Quote::getText() {
         return _dbPtr->text;
 }
 
-Wt::WDateTime       Quote::getDatePublished() {
+std::string       Quote::getDatePublished() {
     // check if _dbPtr is null
-    if(!_dbPtr.get()) return  Wt::WDateTime();
+    if(!_dbPtr.get()) return std::string();
     else
-        _dbPtr -> date_published;
+        return _dbPtr -> date_published;
+
 }
 
 double   Quote::getRating() {
@@ -217,7 +218,7 @@ bool    Quote::updateText(std::string   _text) {
         return false;
 }
 
-bool    Quote::updateDatePublished(Wt::WDateTime  date) {
+bool    Quote::updateDatePublished(std::string&  date) {
 
     if(!_dbPtr.get())
     {
@@ -494,7 +495,7 @@ void    Quote::setText(std::string  text) {
 
 }
 
-void    Quote::setDatePublished(Wt::WDateTime&   date) {
+void    Quote::setDatePublished(std::string&   date) {
 
     newQuote_ -> date_published = date;
 
