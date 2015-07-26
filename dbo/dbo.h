@@ -17,7 +17,7 @@ class   quote {
     public:
 
         std::string     text;
-        Wt::WDateTime       date_published;
+        std::string      date_published = "1";
         double           rating = -1;
         int             viewers = 1;
         bool            verified = false;
