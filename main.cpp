@@ -5,9 +5,11 @@
 #include "dbo/kalematieSession.h"
 #include "quoteResBase.h"
 
+#include <locale>
 
 int main(int    argc, char  **argv) {
-
+    
+    std::locale::global(std::locale("en_US.UTF8"));
     try{
         Wt::WServer server(argv[0], "");
 
