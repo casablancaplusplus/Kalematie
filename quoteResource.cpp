@@ -232,6 +232,7 @@ void    quoteResource::_getQuote_() {
         responseGenerator   resGen(resObj);
         resGen.putOut(_response);
     }
+    quote_->commit();
 
 }
 
@@ -507,6 +508,7 @@ void    quoteResource::_modifyQuote_() {
                    else
                    {
                        std::string  text = jText;
+                       std::cout << text << std::endl;
                        quote_->updateText(text);
                        quote_->updateVerificationStatus(false);
                        quote_->commit();

@@ -53,7 +53,7 @@ class quoteResource  {
 
         // the GET group
         void    _getQuoteRating_(); // implemented
-        void    _getQuote_(); // planned
+        void    _getQuote_(); // implemented 
         void    _getQuoteCollection_();
         void    _getAuthor_();
         void    _getAuthorCollection_();
@@ -68,7 +68,7 @@ class quoteResource  {
 
 
         // the PUT group
-        void    _modifyQuote_();  // planned
+        void    _modifyQuote_();  // implemented 
         void    _modifyAuthor_();
 
         // the DELETE group

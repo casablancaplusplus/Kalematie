@@ -183,7 +183,7 @@ dbo::ptr<quote>&    Quote::getDbPtr() {
 
 bool    Quote::updateText(std::string   _text) {
 
-    if(!_dbPtr.get())
+    if(_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -393,7 +393,7 @@ bool    Quote::updateViewers() {
 
 bool    Quote::updateVerificationStatus(bool    tOrf) {
 
-    if(!_dbPtr.get())
+    if(_dbPtr.get())
     {
         if(_transaction.isActive())
         {
