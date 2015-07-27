@@ -34,8 +34,6 @@ class   responseGenerator {
             {
                 std::string     resStr = Wt::Json::serialize(jResObj);
                 res.out() << resStr << std::endl;
-                // dbug
-                std::cout << resStr << std::endl;
             }
         }
     private:
