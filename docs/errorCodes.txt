@@ -51,4 +51,12 @@
         <td>Could not insert the new quote into the database </td>
         <td>20011</td>
     </tr>
+    <tr>
+        <td>No query parameters where set</td>
+        <td>20012</td>
+    </tr>
+    <tr>
+        <td>the provided authorId is out of range</td>
+        <td>20013</td>
+    </tr>
 </table>

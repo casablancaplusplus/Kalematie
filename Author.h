@@ -10,6 +10,9 @@ class   Author {
     public:
         Author(Wt::Dbo::SqlConnectionPool&   connectionPool);
         ~Author();
+
+        int             getAuthorCount();
+
         bool            initWithAuthorId(int        authorId);
         bool            initWithNickName(std::string nickName);
         bool            initWithPhoneNum(std::string    phoneNumber);

@@ -11,6 +11,7 @@ kalematieSession::kalematieSession(dbo::SqlConnectionPool& connectionPool)
     mapClass<quote>("quote");
     mapClass<author>("author");
     mapClass<rating>("rating");
+    mapClass<fave>("fave");
     mapClass<following>("following");
     mapClass<accessToken>("accessToken");
 

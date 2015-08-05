@@ -10,6 +10,35 @@ Author::Author(Wt::Dbo::SqlConnectionPool&  connectionPool)
 }
 
 Author::~Author() {}
+
+int     Author::getAuthorCount() 
+{
+    int     count = 0;
+    if(_transaction.isActive())
+    {
+        try{
+            count = _session.query<int>("select count(*) from author");
+            return count;
+        }catch(Wt::Dbo::Exception&  e) {
+            std::cout << e.what() << std::endl;
+            return 0;
+        }
+    }
+    else
+    {
+        Wt::Dbo::Transaction    t(_session);
+        try {
+            count = _session.query<int>("select count(*) from author");
+            return count;
+        }catch(Wt::Dbo::Exception&  e) {
+            std::cout << e.what() << std::endl;
+            return 0;
+        }
+    }
+    return count;
+}
+
+
 bool    Author::initWithAuthorId(int    authorId)
 {
     //if(!_dbPtr.get())

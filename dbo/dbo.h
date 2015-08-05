@@ -20,6 +20,8 @@ class   quote {
         std::string      date_published = "1";
         double           rating = -1;
         int             viewers = 1;
+        int             faves = 0;
+        int             originality = 0;
         bool            verified = false;
 
         dbo::ptr<author>    Author;
@@ -31,6 +33,8 @@ class   quote {
                 dbo::field(a,   date_published, "date_published");
                 dbo::field(a,   rating,         "rating");
                 dbo::field(a,   viewers,        "viewers");
+                dbo::field(a,   faves,          "faves");
+                dbo::field(a,   originality,    "originality");
 
                 dbo::belongsTo(a,   Author, "Author");
             }
@@ -124,4 +128,17 @@ class   accessToken {
             }
 };
 
+class   fave {
+
+    public:
+        int     quoteId;
+        int     faverId;
+
+        template<class Action>
+            void    persist(Action& a)
+            {
+                dbo::field(a,   quoteId, "quoteId");
+                dbo::field(a,   faverId, "faverId");
+            }
+};
 #endif

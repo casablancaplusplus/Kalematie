@@ -1,0 +1,36 @@
+_getQuoteCollection_() :
+
+There are two types of quote collection,
+(1)--> a collection of quotes that belong to a specific author
+(2)--> a collection of quotes that doesn't belong to a specific author
+
+
+(1)---> to get this type of collection we need the author id. So, If the authorId
+        parameters was set to a valid value, the fetched quotes should belong
+        to that author.
+        options are :
+        author id          --> authorId(int, required)
+        limit(number, required) --> the number of quotes to be fetched
+                                    this number should be less than 20
+        start(number, optional) --> the start of the quotes
+                                    if zero, the quotes are fetched from 
+                                        the beginning
+        top rated quotes   --> topRating(bool)
+        most faved quotes  --> mostFaved(bool)
+        favorite quotes    --> favorites(bool)
+        original quotes    --> original(bool)
+
+
+(2)---> this type of collection is returned if the author id was not set.
+        options are :
+        minRating(double)
+        maxRating(double)
+        limit(number, required) --> number of quotes to fetch
+        startId(int, required) --> the start quote
+        original(bool)
+        favorites(bool) --> this is the clients favorite quotes which will need
+                            registration in order to work
+        mostFaved(bool)
+        topRating(bool)
+
+

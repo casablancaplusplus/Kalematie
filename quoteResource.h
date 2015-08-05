@@ -13,7 +13,7 @@
 #include "Author.h"
 #include "Quote.h"
 #include "Rating.h"
-
+#include "Fave.h"
 
 #include <regex>
 #include <ctime>
@@ -22,6 +22,7 @@
 
 #include <Wt/Dbo/SqlConnectionPool>
 #include <Wt/WLocalDateTime>
+//#include <Wt/Http/Request>
 
 typedef     Wt::Json::Object    WJO;
 typedef     Wt::Json::Value     WJV;
@@ -53,6 +54,7 @@ class quoteResource  {
 
         // the GET group
         void    _getQuoteRating_(); // implemented
+        void    _getQuoteFaves_();
         void    _getQuote_(); // implemented 
         void    _getQuoteCollection_();
         void    _getAuthor_();
@@ -64,6 +66,7 @@ class quoteResource  {
 
         void    _createQuote_(); // implemented
         void    _postRating_(); // implemented
+        void    _postFave_();
         void    _addAuthor_();
 
 
@@ -101,6 +104,9 @@ class quoteResource  {
         // if post -> a quote gets rated
         static  std::regex      __getOrPostQuoteRating;
         
+        
+        static  std::regex      __getOrPostQuoteFaves;
+
         // The function call corresponding to this regex match
         // will be different based on the request method
         // if get -> a quote is retrieved

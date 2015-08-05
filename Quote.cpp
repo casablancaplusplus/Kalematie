@@ -11,6 +11,38 @@ Quote::Quote(Wt::Dbo::SqlConnectionPool&    connPool)
 }
 Quote::~Quote() {}
 
+
+
+int     Quote::getQuoteCount() 
+{
+    int     count = 0;
+    if(_transaction.isActive())
+    {
+        try{
+            count = _session.query<int>("select count(*) from quote");
+            return count;
+        }catch(Wt::Dbo::Exception&  e) {
+            std::cout << e.what() << std::endl;
+            return 0;
+        }
+    }
+    else
+    {
+        Wt::Dbo::Transaction    t(_session);
+        try {
+            count = _session.query<int>("select count(*) from quote");
+            t.commit();
+            return count;
+        }catch(Wt::Dbo::Exception&  e) {
+            std::cout << e.what() << std::endl;
+            return 0;
+        }
+    }
+    return count;
+
+}
+
+
 //Used to inialize the _dbPtr using the quotes id
 bool    Quote::initWithQuoteId(int  quoteId)
 {
@@ -159,6 +191,13 @@ int     Quote::getViewers() {
     if(!_dbPtr.get())  return -1;
     else
         return _dbPtr -> viewers;
+}
+
+int     Quote::getFaves() {
+
+    if(!_dbPtr.get())   return -1;
+    else
+        return  _dbPtr -> faves;
 }
 
 bool    Quote::getVerificationStatus() {
@@ -356,7 +395,7 @@ bool    Quote::updateRating() {
 bool    Quote::updateViewers() {
 
 
-    if(!_dbPtr.get())
+    if(_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -383,6 +422,44 @@ bool    Quote::updateViewers() {
                 return false;
             }catch(...){
                 std::cout << "Source: Quote::updateViewers() " << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+        return false;
+}
+
+bool    Quote::updateFaves() {
+
+
+    if(_dbPtr.get())
+    {
+        if(_transaction.isActive())
+        {
+            try{
+                _dbPtr.modify() -> faves++;
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateFaves()" << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            Wt::Dbo::Transaction    t(_session);
+            try{
+                _dbPtr.modify() -> faves++;
+                t.commit();
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateFaves() " << std::endl;
                 return false;
             }
         }
