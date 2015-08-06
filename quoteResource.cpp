@@ -267,6 +267,7 @@ void    quoteResource::_getQuote_() {
     {
         error err ("No such resource", 20002);
         err.putOut(_response);
+    
     }
     else
     {
@@ -283,6 +284,8 @@ void    quoteResource::_getQuote_() {
         resData["date_published"]= WJV(Wt::WString::fromUTF8(timeStr));
         resData["rating"]= WJV(quote_->getRating());
         resData["viewers"] = WJV(quote_->getViewers());
+        resData["faves"] = WJV(quote_->getFaves());
+        resData["originality"] = WJV(quote_->getOriginality());
 
         responseGenerator   resGen(resObj);
         resGen.putOut(_response);
@@ -1050,12 +1053,14 @@ void    quoteResource::_deleteQuote_() {
         {
             error   err("No such resource", 20002);
             err.putOut(_response);
+            return;
         }
         else if(quote_->getAuthor().id() != _authorId)
         {
             error   err("You don't have enough privilage to perform this\
                     operation", 20007);
             err.putOut(_response);
+            return;
         }
         quote_->remove();
 

@@ -66,7 +66,8 @@ class   Quote {
         std::string     getDatePublished();
         double          getRating();
         int             getViewers();
-        int             getFaves();  
+        int             getFaves();
+        int             getOriginality();
         // do a manual null check for _dbPtr before using this method
         bool            getVerificationStatus();
         dbo::ptr<author>    getAuthor();
@@ -76,7 +77,8 @@ class   Quote {
         bool            updateDatePublished(std::string&   date);
         bool            updateRating();// this is the overall rating of a quote
         bool            updateViewers();
-        bool            updateFaves(); //
+        bool            updateFaves(); 
+        bool            updateOriginality();
         bool            updateVerificationStatus(bool   tOrf);
         bool            updateAuthor(dbo::ptr<author>&  authorPtr);
 

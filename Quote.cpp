@@ -200,6 +200,12 @@ int     Quote::getFaves() {
         return  _dbPtr -> faves;
 }
 
+int     Quote::getOriginality() {
+    if(!_dbPtr.get())   return  -1;
+    else
+        return  _dbPtr -> originality;
+}
+
 bool    Quote::getVerificationStatus() {
     if(!_dbPtr) return _dbPtr->verified;
 }
@@ -467,6 +473,44 @@ bool    Quote::updateFaves() {
     else
         return false;
 }
+
+bool    Quote::updateOriginality() {
+
+    if(_dbPtr.get())
+    {
+        if(_transaction.isActive())
+        {
+            try{
+                _dbPtr.modify() -> originality++;
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateOriginality()" << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            Wt::Dbo::Transaction    t(_session);
+            try{
+                _dbPtr.modify() -> originality++;
+                t.commit();
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Quote::updateOriginality() " << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+        return false;
+}
+
 
 bool    Quote::updateVerificationStatus(bool    tOrf) {
 
