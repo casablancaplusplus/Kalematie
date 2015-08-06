@@ -1033,9 +1033,39 @@ void    quoteResource::_modifyAuthor_() {
 }
 
 void    quoteResource::_deleteQuote_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
 
+    if(_role == author::role::Guest) 
+    {
+        error   privilageErr("You don't have enough privilage to perform this\
+                                operation",20007);
+        privilageErr.putOut(_response);
+    }
+    else
+    {
+        urlAnalyzer uAnal(_request.pathInfo());
+        std::vector<std::string>    urlVec = uAnal.getResult();
+        int     quoteId = std::stoi(urlVec[1]);
+        Quote   *quote_ = new Quote(_connectionPool);
+        if(!quote_->initWithQuoteId(quoteId))
+        {
+            error   err("No such resource", 20002);
+            err.putOut(_response);
+        }
+        else if(quote_->getAuthor().id() != _authorId)
+        {
+            error   err("You don't have enough privilage to perform this\
+                    operation", 20007);
+            err.putOut(_response);
+        }
+        quote_->remove();
+
+        quote_->commit();
+        
+        WJO     resObj;
+        responseGenerator   resGen(resObj);
+        resGen.putOut(_response, true);
+    }
+         
 }
 
 void    quoteResource::_deleteAuthor_() {

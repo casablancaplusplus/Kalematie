@@ -590,4 +590,7 @@ void    Quote::addQuote() {
 
 }
 
+void    Quote::remove() {
 
+    if(_dbPtr.get()) _dbPtr.remove();
+}

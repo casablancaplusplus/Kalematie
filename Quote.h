@@ -87,6 +87,8 @@ class   Quote {
         void            setDatePublished(std::string&  date);
         void            setAuthor(dbo::ptr<author>  authorPtr);
         void            addQuote();
+
+        void            remove();
         
     private:
         // the smart db pointer incase of working with an existing quote
