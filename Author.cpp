@@ -112,43 +112,6 @@ bool    Author::initWithNickName(std::string    nickName)
 }
 
 
-bool    Author::initWithPhoneNum(std::string    phoneNum)
-{
-    if(!_dbPtr.get())
-    {
-        if(_transaction.isActive())
-        {
-            try{
-                _dbPtr = _session.find<author>().where("phoneNumber = ? ").bind(phoneNum);
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::initWithPhoneNum()" << std::endl;
-                return false;
-            }
-        }
-        else
-        {
-            Wt::Dbo::Transaction    t(_session);
-            try{
-                _dbPtr = _session.find<author>().where("phoneNumber = ? ").bind(phoneNum);
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::initWithPhoneNum() " << std::endl;
-                return false;
-            }
-        }
-    }
-    else
-        return false;
-}
-
-
 bool    Author::setDbPtr(dbo::ptr<author>&  ptr) 
 {
 
@@ -193,40 +156,12 @@ int     Author::getId() {
         return _dbPtr.id();
 }
 
-std::string     Author::getFirstName() {
-
-    if(!_dbPtr.get()) return "";
-    else
-        return _dbPtr->firstName;
-}
-
-std::string     Author::getLastName() {
-
-    if(!_dbPtr.get()) return "";
-    else
-        return _dbPtr->lastName;
-}
 
 std::string     Author::getNickName() {
 
     if(!_dbPtr.get()) return "";
     else
         return _dbPtr-> nickName;
-}
-
-std::string     Author::getPhoneNumber() {
-
-    if(!_dbPtr.get()) return "";
-    else
-        return _dbPtr->phoneNumber;
-}
-
-std::string     Author::getPassword() {
-
-    if(!_dbPtr.get()) return "";
-    else
-        return _dbPtr->password;
-
 }
 
 double       Author::getRating() {
@@ -266,81 +201,18 @@ dbo::ptr<author>&    Author::getDbPtr(){
     return  _dbPtr;
 }
 
-bool    Author::updateFirstName(std::string     firstname) {
-    
-    
-    if(!_dbPtr.get())
-    {
+const dbo::weak_ptr<credentials>&  Author::getCredentials() {
+
         if(_transaction.isActive())
         {
-            try{
-                _dbPtr.modify() -> firstName = firstname;
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updateFirstName()" << std::endl;
-                return false;
-            }
+             return  _dbPtr->Credentials;
         }
         else
         {
-            Wt::Dbo::Transaction    t(_session);
-            try{
-                _dbPtr.modify() -> firstName = firstname;
-                t.commit();
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updateFirstName() " << std::endl;
-                return false;
-            }
+            dbo::Transaction    t(_session);
+            return  _dbPtr->Credentials;
         }
-    }
-    else
-        return false;
 }
-
-bool    Author::updateLastName(std::string      lastname) {
-
-    if(!_dbPtr.get())
-    {
-        if(_transaction.isActive())
-        {
-            try{
-                _dbPtr.modify() -> lastName = lastname;
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updateLastName()" << std::endl;
-                return false;
-            }
-        }
-        else
-        {
-            Wt::Dbo::Transaction    t(_session);
-            try{
-                _dbPtr.modify() -> lastName = lastname;
-                t.commit();
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updateLastName() " << std::endl;
-                return false;
-            }
-        }
-    }
-    else
-        return false;
-}
-
 bool    Author::updateNickName(std::string      nickname) {
 
     if(!_dbPtr.get())
@@ -370,81 +242,6 @@ bool    Author::updateNickName(std::string      nickname) {
                 return false;
             }catch(...){
                 std::cout << "Source: Author::updateNickName() " << std::endl;
-                return false;
-            }
-        }
-    }
-    else
-        return false;
-}
-
-bool    Author::updatePhoneNumber(std::string   phonenum) {
-
-    if(!_dbPtr.get())
-    {
-        if(_transaction.isActive())
-        {
-            try{
-                _dbPtr.modify() -> phoneNumber = phonenum;
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updatePhoneNumber()" << std::endl;
-                return false;
-            }
-        }
-        else
-        {
-            Wt::Dbo::Transaction    t(_session);
-            try{
-                _dbPtr.modify() -> phoneNumber = phonenum;
-                t.commit();
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updatePhoneNumber() " << std::endl;
-                return false;
-            }
-        }
-    }
-    else
-        return false;
-}
-
-bool    Author::updatePassword(std::string  _password) {
-
-
-    if(!_dbPtr.get())
-    {
-        if(_transaction.isActive())
-        {
-            try{
-                _dbPtr.modify() -> password = _password;
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updatePassword()" << std::endl;
-                return false;
-            }
-        }
-        else
-        {
-            Wt::Dbo::Transaction    t(_session);
-            try{
-                _dbPtr.modify() -> password = _password;
-                t.commit();
-                return true;
-            }catch(Wt::Dbo::Exception&  e){
-                std::cout << e.what() << std::endl;
-                return false;
-            }catch(...){
-                std::cout << "Source: Author::updatePassword() " << std::endl;
                 return false;
             }
         }
@@ -574,7 +371,44 @@ bool    Author::updateRole(author::role     Role) {
     else
         return false;
 }
-
+bool    Author::updateCredentials(dbo::weak_ptr<credentials>&   creds)
+{
+    // TODO you probably should invalidate any access token with the 
+    // previous credentials after this operation
+    
+    if(_dbPtr.get())
+    {
+        if(_transaction.isActive())
+        {
+            try{
+                _dbPtr.modify() -> Credentials = creds;
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Author::updateCredentials()" << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            Wt::Dbo::Transaction    t(_session);
+            try{
+                _dbPtr.modify() -> Credentials = creds; 
+                return true;
+            }catch(Wt::Dbo::Exception&  e){
+                std::cout << e.what() << std::endl;
+                return false;
+            }catch(...){
+                std::cout << "Source: Author::updateCredentials() " << std::endl;
+                return false;
+            }
+        }
+    }
+    else
+        return false;
+}
 bool    Author::commit() {
     
     try {
@@ -598,38 +432,28 @@ void    Author::initNewAuthor() {
 
 }
 
-void    Author::setFirstName(std::string    firstname) {
-
-    newAuthor_ -> firstName = firstname;
-}
-
-void    Author::setLastName(std::string     lastname) {
-
-    newAuthor_ -> lastName = lastname;
-}
-
 void    Author::setNickName(std::string     nickname) {
 
     newAuthor_ -> nickName = nickname;
 }
 
-void    Author::setPhoneNumber(std::string  phonenum) {
-
-    newAuthor_ -> phoneNumber = phonenum;
-
-}
-
-void    Author::setPassword(std::string     _password) {
-
-    newAuthor_ -> password = _password;
-
-}
 
 void    Author::setRole(author::role        Role) {
 
     newAuthor_ -> authorRole = Role;
 }
 
+void    Author::setCredentials(dbo::weak_ptr<credentials>&  creds)
+{
+    if(_transaction.isActive())
+        newAuthor_ -> Credentials = creds;
+    else
+    {
+        dbo::Transaction    t(_session);
+        newAuthor_ -> Credentials = creds;
+        t.commit();
+    }
+}
 void    Author::addAuthor() {
 
     _dbPtr = _session.add(newAuthor_);

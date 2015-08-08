@@ -14,6 +14,7 @@ kalematieSession::kalematieSession(dbo::SqlConnectionPool& connectionPool)
     mapClass<fave>("fave");
     mapClass<following>("following");
     mapClass<accessToken>("accessToken");
+    mapClass<credentials>("credentials");
 
     try {
         dbo::Transaction t(*this);

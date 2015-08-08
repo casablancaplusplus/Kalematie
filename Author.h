@@ -15,15 +15,10 @@ class   Author {
 
         bool            initWithAuthorId(int        authorId);
         bool            initWithNickName(std::string nickName);
-        bool            initWithPhoneNum(std::string    phoneNumber);
         bool            setDbPtr(dbo::ptr<author>&  ptr); // initialize using an existing ptr
 
         int             getId();
-        std::string     getFirstName();
-        std::string     getLastName();
         std::string     getNickName();
-        std::string     getPhoneNumber();
-        std::string     getPassword();
         double           getRating();
         int             getFollowers();
         int             getFollowing();
@@ -32,27 +27,21 @@ class   Author {
         author::role    getRole();
         dbo::collection<dbo::ptr<quote> >      getQuoteCollection();
         dbo::ptr<author>&    getDbPtr(); // returns the smart pointer itself
-       
+        const dbo::weak_ptr<credentials>&  getCredentials(); 
 
-        bool            updateFirstName(std::string     firstname);
-        bool            updateLastName(std::string      lastname);
         bool            updateNickName(std::string      nickname);
-        bool            updatePhoneNumber(std::string   phonenumber);
-        bool            updatePassword(std::string      password);
         bool            updateRating();
         bool            updateFollowers();
         bool            updateFollowing();
         bool            updateRole(author::role     Role);
+        bool            updateCredentials(dbo::weak_ptr<credentials>&   cred);
 
         bool            commit(); // persists a new author or the modifications of an existing author
         
         void            initNewAuthor();
-        void            setFirstName(std::string        firstname);
-        void            setLastName(std::string         lastname);
         void            setNickName(std::string         nickname);
-        void            setPhoneNumber(std::string      phonenumber);
-        void            setPassword(std::string         password);
         void            setRole(author::role            Role);
+        void            setCredentials(dbo::weak_ptr<credentials>&  cred);
         // this method should add the author to the db and if successful
         // it should inialize the _dbPtr property with the returned ptr
         void            addAuthor();

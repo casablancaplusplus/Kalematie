@@ -4,13 +4,16 @@
 
 #include <Wt/Dbo/Dbo>
 #include <Wt/Dbo/WtSqlTraits>
+#include <Wt/Dbo/weak_ptr>
 #include <Wt/WDate>
 #include <Wt/WDateTime>
+
 
 namespace   dbo = Wt::Dbo;
 
 
 class author;
+class   credentials;
 
 class   quote {
 
@@ -41,6 +44,8 @@ class   quote {
                 
 };
 
+
+
 class author {
 
     public:
@@ -51,11 +56,7 @@ class author {
             Guest
         };
 
-        std::string     firstName;
-        std::string     lastName;
         std::string     nickName;
-        std::string     phoneNumber;
-        std::string     password;
         double           rating;
         int             followers; // the number of the followes
         int             following; // the number of the others this user 
@@ -63,23 +64,43 @@ class author {
         role            authorRole;
 
         dbo::collection< dbo::ptr<quote> >  quotes;
+        dbo::weak_ptr<credentials>  Credentials;
 
         template<class  Action>
             void    persist(Action& a)
             {
-                dbo::field(a,   firstName,  "firstName");
-                dbo::field(a,   lastName,   "lastName");
                 dbo::field(a,   nickName,   "nickName");
-                dbo::field(a,   phoneNumber,"phoneNumber");
-                dbo::field(a,   password,   "password");
                 dbo::field(a,   rating,     "rating");
                 dbo::field(a,   followers,  "followers");
                 dbo::field(a,   following,  "following");
                 dbo::field(a,   authorRole, "authorRole");
 
                 dbo::hasMany(a, quotes, dbo::ManyToOne, "Author");
+                dbo::hasOne(a,  Credentials);
             }
 };
+
+class   credentials {
+
+    public:
+
+        std::string     email;
+        std::string     phoneNumber;
+        std::string     password;
+
+        dbo::ptr<author>    Author;
+
+        template<class  Action>
+            void    persist(Action& a)
+            {
+                dbo::field(a,   email,  "email");
+                dbo::field(a,   phoneNumber, "phoneNumber");
+                dbo::field(a,   password,   "password");
+
+                dbo::belongsTo(a,   Author);
+            }
+};
+
 class rating {
     
     public:
