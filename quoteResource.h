@@ -54,9 +54,9 @@ class quoteResource  {
 
         // the GET group
         void    _getQuoteRating_(); // implemented
-        void    _getQuoteFaves_();
+        void    _getQuoteFaves_(); // implemented
         void    _getQuote_(); // implemented 
-        void    _getQuoteCollection_();
+        void    _getQuoteCollection_(); // implemented
         void    _getAuthor_();
         void    _getAuthorCollection_();
 
@@ -66,7 +66,7 @@ class quoteResource  {
 
         void    _createQuote_(); // implemented
         void    _postRating_(); // implemented
-        void    _postFave_();
+        void    _postFave_(); // implemeted
         void    _addAuthor_();
 
 
@@ -75,7 +75,7 @@ class quoteResource  {
         void    _modifyAuthor_();
 
         // the DELETE group
-        void    _deleteQuote_();  // planned
+        void    _deleteQuote_(); // implemented 
         void    _deleteAuthor_(); // planned
 
     private:
