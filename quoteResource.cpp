@@ -690,11 +690,46 @@ void    quoteResource::_getQuoteCollection_() {
 }
 
 void    quoteResource::_getAuthor_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
 
+
+    urlAnalyzer     uAnal(_request.pathInfo());
+    std::vector<std::string>    urlVec = uAnal.getResult();
+    int     authorId = 0;
+    try {
+        authorId = std::stoi(urlVec[1]);
+    }catch(std::exception&  e) {
+
+        std::cout << e.what() << std::endl;
+    }catch(...) {
+        std::cout << "Error : There was a problem with the provided \
+            author id " << std::endl;
+    }
+    Author   *author_ = new Author(_connectionPool);
+    if(!author_->initWithAuthorId(authorId))
+    {
+        error err ("No such resource", 20002);
+        err.putOut(_response);
+    
+    }
+    else
+    {
+        WJO resObj;
+        resObj["errorMessage"] = WJV(std::string());
+        resObj["errorCode"] = WJV(0);
+
+        resObj["responseData"] = WJV(Wt::Json::ObjectType);
+        WJO&    resData = resObj["responseData"];
+        resData["id"] = WJV(author_->getId());
+        resData["nickname"] = WJV(author_->getNickName());
+        resData["rating"] = WJV(author_->getRating());
+        resData["followers"] = WJV(author_->getFollowers());
+        resData["following"] = WJV(author_->getFollowing());
+
+        responseGenerator   resGen(resObj);
+        resGen.putOut(_response);
+    }
+    author_->commit();
 }
-
 void    quoteResource::_getAuthorCollection_() {
     error   urlError("Resource Not implemented yet", 20003);
     urlError.putOut(_response);

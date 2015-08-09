@@ -47,7 +47,9 @@ bool    Author::initWithAuthorId(int    authorId)
         {
             try{
                 _dbPtr = _session.find<author>().where("id = ? ").bind(authorId);
-                return true;
+                if(_dbPtr.get())
+                    return true;
+                else    return false;
             }catch(Wt::Dbo::Exception&  e){
                 std::cout << e.what() << std::endl;
                 return false;
