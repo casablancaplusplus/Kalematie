@@ -57,7 +57,7 @@ class quoteResource  {
         void    _getQuoteFaves_(); // implemented
         void    _getQuote_(); // implemented 
         void    _getQuoteCollection_(); // implemented
-        void    _getAuthor_(); // implemented
+        void    _getAuthor_(); // implemented TODO : test it
         void    _getAuthorCollection_();
 
         // the POST group
