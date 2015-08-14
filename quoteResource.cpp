@@ -736,9 +736,24 @@ void    quoteResource::_getAuthorCollection_() {
 }
 
 void    quoteResource::_getAccessToken_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
+    std::string     authString = _request.headerValue("Authorization");
+    tokenExtractor  tokenStr(authString);
+    Token    *token_ = new Token(tokenStr.getTokenStr());
+    if(token_-> createAccessToken(_connectionPool)) {
+        WJO resObj;
+        resObj["errorMessage"] = WJV(std::string());
+        resObj["errorCode"] = WJV(0);
+        resObj["responseData"] = WJV(Wt::Json::ObjectType);
+        WJO&    resData = resObj["responseData"];
+        resData["accessToken"] = WJV(token_->getAccessToken());
 
+        responseGenerator   resGen(resObj);
+        resGen.putOut(_response);
+    }
+    else {
+        error   err("Invalid credentials", 20014);
+        err.putOut(_response);
+    }
 }
 
 void    quoteResource::_invalidateAccessToken_() {
@@ -1116,35 +1131,6 @@ void    quoteResource::_deleteAuthor_() {
 
 
 bool    quoteResource::authenticate() {
-    /*
-     * test code
-     * you used this code to add records to the tables
-     *
-
-            kalematieSession        session(_connectionPool);
-            Wt::Dbo::Transaction    t(session);
-            
-            accessToken     *aToken = new   accessToken();
-            aToken -> token = "accesstoken";
-            aToken -> userId= 1;
-            aToken -> role = author::Author;
-
-            author          *anAuthor = new author();
-            anAuthor -> firstName = "Nazar";
-            anAuthor -> lastName = "Abdolkhanie";
-            anAuthor -> nickName = "casablanca";
-            anAuthor -> phoneNumber = "09169211845";
-            anAuthor -> password = "secret";
-            anAuthor -> rating = 8.9;
-            anAuthor -> followers = 1232;
-            anAuthor -> following = 452;
-            anAuthor -> authorRole = author::Author;
-            
-            session.add(aToken);
-            session.add(anAuthor);
-
-
-    ********end**************/
 
     std::string     authString = _request.headerValue("Authorization");
     // TODO : do a size check for the value of the Authorization header
@@ -1189,6 +1175,7 @@ bool    quoteResource::authenticate() {
         }
         else if(authString.find("Basic")!=std::string::npos)
         {
+            
             std::string     _url = _request.pathInfo();
             if(_request.method() == "POST")
             {

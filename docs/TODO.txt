@@ -4,11 +4,6 @@ you where trying to figure out the Bearer stuff and a scheme for the db and the 
 
 
 
-user regeistration :
------------------------------
-user registration is done via _addAuthor_() so the call to it should be when the token type is Bearer.
-
-
 one more thing : when the token type is Bearer, the client should not be able to call 
 /api/token
 /api/invalidate_token
@@ -19,3 +14,6 @@ TODO : ask the wt community why Wt::Dbo::Transaction doesn't have an operator=()
 
 
 report the bug of the Wt::Dbo::ptr<C>::operator bool() bug : it it functions on the underying pointer and returns false in case of a null object -> reverse of the documentation
+
+
+

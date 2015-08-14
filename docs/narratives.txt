@@ -34,3 +34,23 @@ There are two types of quote collection,
         topRating(bool)
 
 
+
+=========================================================================================
+
+authentication :
+
+(1) --> registration
+(2) --> access token creation
+(3) --> access token invalidation
+
+
+(1) --> registration : It can be done via phone number and email.
+        phone number regsitration : --> the user sends their phone number to the server ( needs a dedicated resource )
+                                    --> the server validates the phone number, generates a password and sends it to the user via sms
+                                    --> the user then uses their phone number and recieved password to create a base64 encoded string
+                                        and send it to the server to retrieve an access token.
+        email registration : --> the user sends their email to the server ( needs a dedicated resource)
+                             --> the server validates the emails format, generates a password and sends it to the email of the user
+                             --> the user then uses thier email and recieved password to create a base64 encoded string
+                                 and send it to the server to retrieve an access token.
+        class registration

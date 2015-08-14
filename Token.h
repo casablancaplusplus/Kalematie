@@ -1,19 +1,26 @@
 #ifndef     _TOKEN_H_
 #define     _TOKEN_H_
 
-// This class takes care of creating an access token or invalidating it and registering users
-// It also contains the actual username and password
-// and
+#include "util/tokenExtractor.h"
+#include "Credentials.h"
 
-class   token {
+#include <regex>
+
+#include <Wt/Utils>
+#include <Wt/Dbo/SqlConnectionPool>
+
+// This class takes care of creating an access token or invalidating it
+// It also contains the actual username and password
+
+class   Token {
 
     public:
-        token(std::string   base64str);
+        Token(std::string   base64str);
         
         // creates an access token using the provided base64 string on construction
         // and returns true on success
         // or returns false on failure
-        bool     createAccessToken();
+        bool     createAccessToken(Wt::Dbo::SqlConnectionPool& connPool);
 
         // In order for this funciton to work, It needs to compare the
         // accessToken parameter with the one it creates from the base64str
@@ -22,7 +29,6 @@ class   token {
         bool     invalidateAccessToken(std::string   accessToken);
         
         // this function uses the username and password extracted by the Ctor and creates a new user in the db
-        bool    registerUser();
         
         // getters
         std::string     getUsername();
@@ -35,6 +41,9 @@ class   token {
         std::string     _accessToken; // an empty string initially
         std::string     _username;
         std::string     _password;
+
+        static  std::regex      __phoneNumber;
+        static  std::regex      __email;
 };
 
 

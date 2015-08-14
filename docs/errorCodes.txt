@@ -59,4 +59,8 @@
         <td>the provided authorId is out of range</td>
         <td>20013</td>
     </tr>
+    <tr>
+        <td>Invalid credentials</td>
+        <td>20014</td>
+    </tr>
 </table>

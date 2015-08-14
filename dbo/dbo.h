@@ -139,6 +139,7 @@ class   accessToken {
         std::string     token;
         int             userId;
         author::role    role;
+        std::string     creationDate; // as unix time
 
         template<class  Action>
             void    persist(Action&     a)
@@ -146,6 +147,7 @@ class   accessToken {
                 dbo::field(a,   token,  "token");
                 dbo::field(a,   userId, "userId");
                 dbo::field(a,   role,   "role");
+                dbo::field(a,   creationDate, "creationDate");
             }
 };
 

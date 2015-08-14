@@ -14,6 +14,7 @@
 #include "Quote.h"
 #include "Rating.h"
 #include "Fave.h"
+#include "Token.h"
 
 #include <regex>
 #include <ctime>
@@ -22,6 +23,7 @@
 
 #include <Wt/Dbo/SqlConnectionPool>
 #include <Wt/WLocalDateTime>
+#include <Wt/Utils>
 //#include <Wt/Http/Request>
 
 typedef     Wt::Json::Object    WJO;

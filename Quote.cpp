@@ -69,6 +69,7 @@ bool    Quote::initWithQuoteId(int  quoteId)
             Wt::Dbo::Transaction    t(_session);
             try{
                 _dbPtr = _session.find<quote>().where("id = ? ").bind(quoteId);
+                t.commit();
                 return true;
             }catch(Wt::Dbo::Exception&  e){
                 std::cout << e.what() << std::endl;
@@ -124,7 +125,7 @@ bool    Quote::initWithQuoteText(std::string    text)
 bool    Quote::setDbPtr(dbo::ptr<quote>&     ptr)
 {
 
-    if(!_dbPtr.get())
+    if(_dbPtr.get())
     {
         if(_transaction.isActive())
         {
@@ -217,7 +218,7 @@ dbo::ptr<author>   Quote::getAuthor() {
 
        }catch(Wt::Dbo::Exception&   e) {
            std::cout << e.what() << std::endl;
-           return dbo::ptr<author>();
+           return   dbo::ptr<author>();
        }
 }
 
