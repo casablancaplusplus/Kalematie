@@ -63,13 +63,13 @@ class quoteResource  {
         void    _getAuthorCollection_();
 
         // the POST group
-        void    _getAccessToken_();         // security layer 
-        void    _invalidateAccessToken_();  // security layer
+        void    _getAccessToken_();         // implemented 
+        void    _invalidateAccessToken_();  // implemented 
 
         void    _createQuote_(); // implemented
         void    _postRating_(); // implemented
         void    _postFave_(); // implemeted
-        void    _addAuthor_();
+        void    _addAuthor_(); // planned
 
 
         // the PUT group

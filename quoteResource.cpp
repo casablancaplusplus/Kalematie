@@ -1036,8 +1036,8 @@ void    quoteResource::_postFave_() {
 
 
 void    quoteResource::_addAuthor_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
+
+
 
 }
 
@@ -1170,8 +1170,14 @@ bool    quoteResource::authenticate() {
     std::string     authString = _request.headerValue("Authorization");
     // TODO : do a size check for the value of the Authorization header
     if ( authString == "") {
-        error   authError("No Authorization header was provided",20000);
-        authError.putOut(_response);
+        std::string     _url = _request.pathInfo();
+        if(_request.method() == "POST" &&
+                std::regex_match(_url.begin(), _url.end(), __addAuthor)) {
+            return true;
+        } else {
+            error   authError("No Authorization header was provided",20000);
+            authError.putOut(_response);
+        }
     }
     else
     {

@@ -25,6 +25,49 @@ bool    Token::createAccessToken(Wt::Dbo::SqlConnectionPool&    connPool) {
     */
 
     if(_username == "" || _password == "") return false;
+    else if(_username == "guest" || _password == "guest") {
+        try {
+                // create and return the accessToken
+                Wt::WDateTime   dateTime = Wt::WDateTime::currentDateTime();
+                std::string     unixTimeAsStr = std::to_string(dateTime.toTime_t());
+                std::string     rawString =
+                    _username + ':' + _password + ":Masoume:" + unixTimeAsStr;
+                _accessToken = Wt::Utils::sha1(rawString);
+                _accessToken = Wt::Utils::base64Encode(_accessToken);
+                // fetch the user info before commiting 
+                author::role    role_ = author::role::Guest;
+                try { 
+                    // add it to the accessToken table
+                    kalematieSession   _session(connPool);
+                    dbo::Transaction        t(_session);
+
+                    accessToken     *dbPtr_ = new accessToken();
+ 
+                    dbPtr_ -> token = _accessToken;
+                    dbPtr_ -> role  = role_;
+                    dbPtr_ -> creationDate = unixTimeAsStr;
+
+                    _session.add(dbPtr_);
+
+                    t.commit();
+
+                    return true;
+                } catch(Wt::Dbo::Exception& e) {
+                    std::cout << e.what() << std::endl;
+                    return false;
+                } catch(...) {
+                    std::cout << "Something went wrong trying to register the token in the \
+                        accessToken table" << std::endl;
+                    return false;
+                }
+            } catch(std::exception& e) {
+                std::cout << e.what() << std::endl;
+                return false;
+            } catch(...) {
+                std::cout << "Something went wrong trying to create the token string" << std::endl;
+                return false;
+            }
+    }
     else {
         /* dbug code
         std::cout << "______ USERNAME : " << _username << std::endl;
