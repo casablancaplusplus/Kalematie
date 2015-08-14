@@ -757,9 +757,44 @@ void    quoteResource::_getAccessToken_() {
 }
 
 void    quoteResource::_invalidateAccessToken_() {
-    error   urlError("Resource Not implemented yet", 20003);
-    urlError.putOut(_response);
+    // TODO : make sure you don't
+    // create an access token for 
+    // a client that already has one
+    std::string     authString  = _request.headerValue("Authorization");
+    tokenExtractor  tokenStr(authString);
+    Token   *token_ = new Token(tokenStr.getTokenStr());
+    // extract the access token from the body
+    bodyExtractor   Body(_request);
+    if(!Body.turnIntoJsonObj()) {
+        error   err("The provided body is not well formed", 20008);
+        err.putOut(_response);
+        //dbug
+        std::cout << Body.getError().what() << std::endl;
+        return;
+    } else {
+        Wt::Json::Object&   jBody = Body.getJsonObjBody();
+        Wt::Json::Value     jText = jBody.get("accessToken");
+        if(jText.isNull() || jText.type() != Wt::Json::Type::StringType)
+        {
+            error   err("The provided body is not well formed", 20008);
+            err.putOut(_response);
+        } else {
+            std::string     accessToken = jText;
+            if(token_->invalidateAccessToken(accessToken, _connectionPool)) {
+                WJO resObj;
+                resObj["errorMessage"] = WJV(std::string());
+                resObj["errorCode"] = WJV(0);
+                resObj["responseData"] = WJV(std::string());
 
+                responseGenerator   resGen(resObj);
+                resGen.putOut(_response);
+            
+            } else {
+                error   err("Invalid credentials", 20014);
+                err.putOut(_response);
+            }
+        }
+    }
 }
 
 void    quoteResource::_createQuote_() {

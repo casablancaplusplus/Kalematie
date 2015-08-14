@@ -7,6 +7,7 @@
 #include <regex>
 
 #include <Wt/Utils>
+#include <Wt/Dbo/ptr>
 #include <Wt/Dbo/SqlConnectionPool>
 
 // This class takes care of creating an access token or invalidating it
@@ -26,7 +27,8 @@ class   Token {
         // accessToken parameter with the one it creates from the base64str
         // that is taken in construction and if equal -> does the job and returns true
         // else -> return false
-        bool     invalidateAccessToken(std::string   accessToken);
+        bool     invalidateAccessToken(std::string   accessToken,
+                Wt::Dbo::SqlConnectionPool& connPool);
         
         // this function uses the username and password extracted by the Ctor and creates a new user in the db
         

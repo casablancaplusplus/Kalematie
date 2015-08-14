@@ -1,7 +1,5 @@
 #include "Token.h"
 
-
-
 Token::Token(std::string    base64str)
     : _base64str(base64str),
       _accessToken(""),
@@ -98,6 +96,73 @@ bool    Token::createAccessToken(Wt::Dbo::SqlConnectionPool&    connPool) {
         }
     }
 }
+
+
+bool    Token::invalidateAccessToken(std::string    accessToken_,
+        Wt::Dbo::SqlConnectionPool& connPool) {
+    if(_username == "" || _password == "") return false;
+    else {
+        Credentials     *creds_ = new Credentials(connPool);
+        if(std::regex_match(_username.begin(), _username.end(), __phoneNumber)) {
+            // dbug passed
+            //std::cout << "______ I'm in the phone regex ______" << std::endl;
+            creds_ -> initWithPhoneNumber(_username);
+        }
+        else if (std::regex_match(_username.begin(), _username.end(), __email)) {
+            // dbug
+            //std::cout << "________ I'm in the email regex ______ " << std::endl;
+            creds_ -> initWithEmail(_username);
+        } else return false;
+        if( creds_ -> getPassword() != _password ) {
+            // dbug
+            //std::cout << "_______ DB password : " << creds -> getPassword() << '\n';
+            //std::cout << "_______ User pass : " << _password << std::endl;
+            return false;
+        }
+        else {
+            int     userId_ = creds_ -> getAuthor().id();
+            creds_ -> commit();
+            std::string     dbToken = "";
+            std::string     dbTokenTime = "";
+            try {
+                kalematieSession    _session(connPool);
+                dbo::Transaction    t(_session);
+                // test
+                dbo::ptr<accessToken>   dbPtr_ = _session.find<accessToken>().where("userId = ?").bind(userId_);
+                dbToken = dbPtr_ -> token;
+                dbTokenTime = dbPtr_ -> creationDate;
+
+                // create a token and compare with the db version
+                std::string     rawString =
+                    _username + ':' + _password + ":Masoume:" + dbTokenTime;
+                _accessToken = Wt::Utils::base64Encode(
+                        Wt::Utils::sha1(rawString));
+
+                if(accessToken_ == dbToken) {
+                    dbPtr_.remove();
+                    t.commit();
+                    return true;
+                } else {
+                    t.commit();
+                    return false;
+                }
+            } catch(Wt::Dbo::Exception& e) {
+                std::cout << e.what() << std::endl;
+                return false;
+            } catch(std::exception& e) {
+                std::cout << e.what() << std::endl;
+                return false;
+            } catch(...) {
+                std::cout << "Something went wrong trying to invalidate \
+                    and accessToken" << std::endl;
+                return false;
+            }
+        }
+    }
+}
+
+                
+
 
 
 
