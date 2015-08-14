@@ -65,6 +65,11 @@ bool    Token::createAccessToken(Wt::Dbo::SqlConnectionPool&    connPool) {
                     // add it to the accessToken table
                     kalematieSession   _session(connPool);
                     dbo::Transaction        t(_session);
+                    // check for an accessToken for the requesting user
+                    dbo::ptr<accessToken>   dbPtr = _session.find<accessToken>()
+                        .where("userId = ?").bind(userId_);
+                    // terminate if found
+                    if(dbPtr.get()) return false;
 
                     accessToken     *dbPtr_ = new accessToken();
  
