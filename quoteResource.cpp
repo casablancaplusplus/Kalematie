@@ -1036,9 +1036,140 @@ void    quoteResource::_postFave_() {
 
 
 void    quoteResource::_addAuthor_() {
+    bodyExtractor   Body(_request);
+    if(!Body.turnIntoJsonObj()) {
+        error   err("The provided body is not well formed", 20008);
+        err.putOut(_response);
+    } else {
+        Wt::Json::Object&   jBody = Body.getJsonObjBody();
+        Wt::Json::Value     jUsername = jBody.get("username");
+        Wt::Json::Value     jNickName = jBody.get("nickName");
+        if(jUsername.isNull() || jNickName.isNull() ||
+                jUsername.type() != Wt::Json::Type::StringType ||
+                jNickName.type() != Wt::Json::Type::StringType ) {
+            error err("The provided body is not well formed", 20008);
+            err.putOut(_response);
+        } else {
+            std::string     username = jUsername;
+            std::string     nickName = jNickName;
+            // use this variable as a reminder of the username type
+            // email or phonenumber
+            std::string     usernameType = "";
+            Credentials     *creds_ = new Credentials(_connectionPool);
+            if(std::regex_match(username.begin(), username.end(),
+                        Token::getEmailRegex())) {
+                if(creds_->initWithEmail(username)) {
+                    error   err("User already exists", 20015);
+                    err.putOut(_response);
+                    return;
+                } 
+                usernameType = "email";
+            } else if(std::regex_match(username.begin(), username.end(),
+                        Token::getPhoneNumberRegex())) {
+                if(creds_->initWithPhoneNumber(username)) {
+                    error   err("User already exists", 20015);
+                    err.putOut(_response);
+                    return;
+                }
+                usernameType = "phoneNumber";
+            } else if(nickName == "" || nickName.size() < 3) {
+                error   err("Invalid username or nickname", 20017);
+                err.putOut(_response);
+                return;
+            } else {
+                error   err("Invalid username or nickname", 20017);
+                err.putOut(_response);
+                return;
+            }
+            creds_->commit(); // unlock the db
 
+            Author      *author_ = new Author(_connectionPool);
+            if(author_->initWithNickName(nickName)) {
+                error err("Nickname taken", 20016);
+                err.putOut(_response);
+                return;
+            }
+            author_->commit();
+            try {
+            // submit the username and generate a password
+            creds_-> initNewCredentials();
+            (usernameType == "email" ) ? 
+                creds_->setEmail(username) : creds_->setPhoneNumber(username);
+            std::string     password = "";
+            std::string     rawPassword = "";
+            // a boolean that is used to generate a unique password
+            bool    generate = true;
+            while(generate) {
+                Wt::WDateTime   dateTime = Wt::WDateTime::currentDateTime();
+                rawPassword = "nazar:masoume:" + 
+                    std::to_string(dateTime.toTime_t());
+                password = Wt::Utils::base64Encode(Wt::Utils::md5(rawPassword))
+                .substr(0,5); // TODO conver to lower case 
+                // TODO eliminate any  non alphabet characters
+            
+                // check for it in the db
+                kalematieSession    _session(_connectionPool);
+                dbo::Transaction    t(_session);
+                
+                dbo::ptr<credentials>  tempDbPtr = _session.find<credentials>()
+                    .where("password = ?").bind(password);
+                if(!tempDbPtr.get()) generate = false; // break the loop
+            }
+            creds_->setPassword(password);
+             
+            author_->initNewAuthor();
+            author_->setNickName(nickName);
+            author_->setRole(author::role::Author);
+            author_->addAuthor();
+            author_->commit();
+            creds_->setAuthor(author_->getDbPtr());
+            creds_->addCredentials();
+            creds_->commit();
+            // send the password to the client
+            // via either email or phone number
+            
+            if(usernameType == "email") { // send via email
+                Wt::Mail::Message   message;
+                message.setFrom(Wt::Mail::Mailbox("no-reply@kalematie.me", "Kalematie"));
+                message.addRecipient(Wt::Mail::To, Wt::Mail::Mailbox(username, nickName));
+                message.setSubject("Kalematie password");
+                std::string b = "There are your kalematie credentials: fuck you "; 
+                message.setBody(b);
+                Wt::Mail::Client    client;
+                client.connect("localhost");
+                client.send(message);
+            } else if (usernameType == "phoneNumber") {
+                Wt::Http::Client    *client = new Wt::Http::Client();
+                client->setTimeout(20);
+                client->setMaximumResponseSize(10*1024);
+                client->done().connect(boost::bind(&quoteResource::handle, this,
+                            _1, _2));
+                std::string     message = "";
+                std::string     tempMess = "http://api.kavenegar.com/v1/4B706A4A50784744734773477049516D313947694D4138513D3D/sms/send.json?receptor=09169211845&sender=30006703323323&message=";
+                message += Wt::Utils::htmlEncode("Your Kalematie password is : " + password);
+                if(client->request(Wt::Http::Method::Get,tempMess+message,Wt::Http::Message())) { 
+                    std::cout << "SMS SENT" << std::endl;
+            } else std::cout << "COULD NOT SEND SMS" << std::endl;
+            }
 
+            WJO resObj;
 
+            responseGenerator   resGen(resObj);
+            resGen.putOut(_response,true);
+
+            } catch(Wt::Dbo::Exception& e) {
+                std::cout << e.what() << std::endl;
+                return;
+            } catch(std::exception& e) {
+                std::cout << e.what() << std::endl;
+                return;
+            } catch(...) {
+                std::cout << "Something went wrong trying to \
+                    register a new user " << std::endl;
+                return;
+            }
+        }
+    }
 }
 
 void    quoteResource::_modifyQuote_() {
@@ -1289,3 +1420,20 @@ std::regex      quoteResource::__getAuthorCollection = std::regex(
         
 std::regex      quoteResource::__tokenSearchReg = std::regex(
         "[\\s]+", std::regex_constants::icase);
+
+// test
+
+void    quoteResource::handle(boost::system::error_code err, const Wt::Http::Message&  res) {
+    //std::cout << res.body() << std::endl;
+    //std::cout << "I'm here" << std::endl;
+    if(!err) {
+        if(res.status() == 200) {
+            std::cout << "DELIVERED" << std::endl;
+            //std::cout << res.body() << std::endl;
+        } else{
+            std::cout << "COULD NOT BE DELIVERED: " << err.message() << std::endl;
+        }
+    } else {
+        std::cout << err.message() << std::endl;
+    }
+}

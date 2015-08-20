@@ -231,6 +231,14 @@ std::string     Token::getBase64str() {
     return _base64str;
 }
 
+std::regex  Token::getEmailRegex() {
+    return  __email;
+}
+
+std::regex  Token::getPhoneNumberRegex() {
+    return __phoneNumber;
+}
+
 // TODO : implement the regexes
 std::regex  Token::__email = std::regex(
         "^[A-Za-z0-9](([_\\.\\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\\.\\-]?[a-zA-Z0-9]+)*)\\.([A-Za-z]{2,})$", std::regex_constants::icase);

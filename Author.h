@@ -27,21 +27,20 @@ class   Author {
         author::role    getRole();
         dbo::collection<dbo::ptr<quote> >      getQuoteCollection();
         dbo::ptr<author>&    getDbPtr(); // returns the smart pointer itself
-        const dbo::weak_ptr<credentials>&  getCredentials(); 
+        dbo::collection<dbo::ptr<credentials> >  getCredentials(); 
 
         bool            updateNickName(std::string      nickname);
         bool            updateRating();
         bool            updateFollowers();
         bool            updateFollowing();
         bool            updateRole(author::role     Role);
-        bool            updateCredentials(dbo::weak_ptr<credentials>&   cred);
+        //bool            updateCredentials(dbo::ptr<credentials>&   cred);
 
         bool            commit(); // persists a new author or the modifications of an existing author
         
         void            initNewAuthor();
         void            setNickName(std::string         nickname);
         void            setRole(author::role            Role);
-        void            setCredentials(dbo::weak_ptr<credentials>&  cred);
         // this method should add the author to the db and if successful
         // it should inialize the _dbPtr property with the returned ptr
         void            addAuthor();

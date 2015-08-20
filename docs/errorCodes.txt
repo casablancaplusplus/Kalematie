@@ -63,4 +63,16 @@
         <td>Invalid credentials</td>
         <td>20014</td>
     </tr>
+    <tr>
+        <td>User already exists</td>
+        <td>20015</td>
+    </tr>
+    <tr>
+        <td>Nickname taken</td>
+        <td>20016</td>
+    </tr>
+    <tr>
+        <td>Invalid username or nickname</td>
+        <td>20017</td>
+    </tr>
 </table>

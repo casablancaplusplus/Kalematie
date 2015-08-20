@@ -64,7 +64,7 @@ class author {
         role            authorRole;
 
         dbo::collection< dbo::ptr<quote> >  quotes;
-        dbo::weak_ptr<credentials>  Credentials;
+        dbo::collection< dbo::ptr<credentials> > Credentials;
 
         template<class  Action>
             void    persist(Action& a)
@@ -76,7 +76,7 @@ class author {
                 dbo::field(a,   authorRole, "authorRole");
 
                 dbo::hasMany(a, quotes, dbo::ManyToOne, "Author");
-                dbo::hasOne(a,  Credentials);
+                dbo::hasMany(a,  Credentials, dbo::ManyToOne, "Author");
             }
 };
 
@@ -97,7 +97,7 @@ class   credentials {
                 dbo::field(a,   phoneNumber, "phoneNumber");
                 dbo::field(a,   password,   "password");
 
-                dbo::belongsTo(a,   Author);
+                dbo::belongsTo(a,   Author, "Author");
             }
 };
 

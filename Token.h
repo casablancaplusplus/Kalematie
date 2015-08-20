@@ -37,7 +37,9 @@ class   Token {
         std::string     getPassword();
         std::string     getAccessToken();
         std::string     getBase64str();
-
+        
+        static  std::regex  getEmailRegex();
+        static  std::regex  getPhoneNumberRegex();
     private:
         std::string     _base64str;
         std::string     _accessToken; // an empty string initially

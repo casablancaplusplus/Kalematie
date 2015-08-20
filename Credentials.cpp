@@ -183,5 +183,10 @@ void    Credentials::setAuthor(dbo::ptr<author>&    author) {
 }
 
 void    Credentials::addCredentials() {
-    _dbPtr = _session.add(newCredentials_);
+    if(_transaction.isActive()) 
+        _dbPtr = _session.add(newCredentials_);
+    else {
+        dbo::Transaction    t(_session);
+        _dbPtr = _session.add(newCredentials_);
+    }
 }

@@ -24,7 +24,10 @@
 #include <Wt/Dbo/SqlConnectionPool>
 #include <Wt/WLocalDateTime>
 #include <Wt/Utils>
-//#include <Wt/Http/Request>
+#include <Wt/Dbo/weak_ptr>
+#include <Wt/Mail/Client>
+#include <Wt/Mail/Message>
+#include <Wt/Http/Client>
 
 typedef     Wt::Json::Object    WJO;
 typedef     Wt::Json::Value     WJV;
@@ -79,7 +82,10 @@ class quoteResource  {
         // the DELETE group
         void    _deleteQuote_(); // implemented 
         void    _deleteAuthor_(); // planned
-
+        
+        // test
+        void    handle(boost::system::error_code    err,
+                const   Wt::Http::Message&  res);
     private:
         
         const Wt::Http::Request&    _request;

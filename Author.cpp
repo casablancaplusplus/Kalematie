@@ -85,7 +85,8 @@ bool    Author::initWithNickName(std::string    nickName)
         {
             try{
                 _dbPtr = _session.find<author>().where("nickName = ? ").bind(nickName);
-                return true;
+                if(_dbPtr.get())    return true;
+                else                return false;
             }catch(Wt::Dbo::Exception&  e){
                 std::cout << e.what() << std::endl;
                 return false;
@@ -99,7 +100,8 @@ bool    Author::initWithNickName(std::string    nickName)
             Wt::Dbo::Transaction    t(_session);
             try{
                 _dbPtr = _session.find<author>().where("nickName = ? ").bind(nickName);
-                return true;
+                if(_dbPtr.get())    return true;
+                else                return false;
             }catch(Wt::Dbo::Exception&  e){
                 std::cout << e.what() << std::endl;
                 return false;
@@ -203,7 +205,7 @@ dbo::ptr<author>&    Author::getDbPtr(){
     return  _dbPtr;
 }
 
-const dbo::weak_ptr<credentials>&  Author::getCredentials() {
+dbo::collection<dbo::ptr<credentials> >  Author::getCredentials() {
 
         if(_transaction.isActive())
         {
@@ -373,6 +375,7 @@ bool    Author::updateRole(author::role     Role) {
     else
         return false;
 }
+/*
 bool    Author::updateCredentials(dbo::weak_ptr<credentials>&   creds)
 {
     // TODO you probably should invalidate any access token with the 
@@ -411,6 +414,8 @@ bool    Author::updateCredentials(dbo::weak_ptr<credentials>&   creds)
     else
         return false;
 }
+*/
+
 bool    Author::commit() {
     
     try {
@@ -444,7 +449,7 @@ void    Author::setRole(author::role        Role) {
 
     newAuthor_ -> authorRole = Role;
 }
-
+/*
 void    Author::setCredentials(dbo::weak_ptr<credentials>&  creds)
 {
     if(_transaction.isActive())
@@ -456,7 +461,12 @@ void    Author::setCredentials(dbo::weak_ptr<credentials>&  creds)
         t.commit();
     }
 }
+*/
 void    Author::addAuthor() {
-
-    _dbPtr = _session.add(newAuthor_);
+    if(_transaction.isActive())
+        _dbPtr = _session.add(newAuthor_);
+    else {
+        dbo::Transaction    t(_session);
+        _dbPtr = _session.add(newAuthor_);
+    }
 }
