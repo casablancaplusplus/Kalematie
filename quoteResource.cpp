@@ -1061,6 +1061,7 @@ void    quoteResource::_addAuthor_() {
                 if(creds_->initWithEmail(username)) {
                     error   err("User already exists", 20015);
                     err.putOut(_response);
+                    creds_-> commit();
                     return;
                 } 
                 usernameType = "email";
@@ -1069,16 +1070,19 @@ void    quoteResource::_addAuthor_() {
                 if(creds_->initWithPhoneNumber(username)) {
                     error   err("User already exists", 20015);
                     err.putOut(_response);
+                    creds_->commit();
                     return;
                 }
                 usernameType = "phoneNumber";
             } else if(nickName == "" || nickName.size() < 3) {
                 error   err("Invalid username or nickname", 20017);
                 err.putOut(_response);
+                creds_->commit();
                 return;
             } else {
                 error   err("Invalid username or nickname", 20017);
                 err.putOut(_response);
+                creds_->commit();
                 return;
             }
             creds_->commit(); // unlock the db
@@ -1087,6 +1091,7 @@ void    quoteResource::_addAuthor_() {
             if(author_->initWithNickName(nickName)) {
                 error err("Nickname taken", 20016);
                 err.putOut(_response);
+                author_->commit();
                 return;
             }
             author_->commit();
@@ -1127,7 +1132,7 @@ void    quoteResource::_addAuthor_() {
             creds_->commit();
             // send the password to the client
             // via either email or phone number
-            
+            /*
             if(usernameType == "email") { // send via email
                 Wt::Mail::Message   message;
                 message.setFrom(Wt::Mail::Mailbox("no-reply@kalematie.me", "Kalematie"));
@@ -1151,11 +1156,16 @@ void    quoteResource::_addAuthor_() {
                     std::cout << "SMS SENT" << std::endl;
             } else std::cout << "COULD NOT SEND SMS" << std::endl;
             }
-
+            */
             WJO resObj;
+            resObj["errorMessage"] = WJV(std::string());
+            resObj["errorCode"] = WJV(0);
+            resObj["responseData"] = WJV(Wt::Json::ObjectType);
+            WJO&    resData = resObj["responseData"];
+            resData["password"] = WJV(password);
 
             responseGenerator   resGen(resObj);
-            resGen.putOut(_response,true);
+            resGen.putOut(_response);
 
             } catch(Wt::Dbo::Exception& e) {
                 std::cout << e.what() << std::endl;
