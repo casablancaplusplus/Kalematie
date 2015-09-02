@@ -7,7 +7,6 @@ kalematieSession::kalematieSession(dbo::SqlConnectionPool& connectionPool)
     :connectionPool_(connectionPool)
 {
     setConnectionPool(connectionPool_);
-    
     mapClass<quote>("quote");
     mapClass<author>("author");
     mapClass<rating>("rating");
@@ -15,7 +14,10 @@ kalematieSession::kalematieSession(dbo::SqlConnectionPool& connectionPool)
     mapClass<following>("following");
     mapClass<accessToken>("accessToken");
     mapClass<credentials>("credentials");
+}
 
+void kalematieSession::mapTheClasses() {
+    
     try {
         dbo::Transaction t(*this);
         this->createTables();

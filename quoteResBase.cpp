@@ -1,8 +1,11 @@
 #include "quoteResBase.h"
+#include "dbo/kalematieSession.h"
 
 quoteResBase::quoteResBase(Wt::Dbo::SqlConnectionPool&  connPool)
     :_connectionPool(connPool)
     {
+        kalematieSession    session(_connectionPool);
+        session.mapTheClasses();
     }
 
 

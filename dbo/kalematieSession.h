@@ -12,6 +12,7 @@ class kalematieSession : public dbo::Session
         
         kalematieSession(dbo::SqlConnectionPool& connectionPool);
         
+        void    mapTheClasses();
         static dbo::SqlConnectionPool *createConnectionPool(
                 const std::string& sqlite3);
 
