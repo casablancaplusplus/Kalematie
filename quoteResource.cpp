@@ -19,7 +19,6 @@ quoteResource::quoteResource(Wt::Dbo::SqlConnectionPool&    connectionPool,
         else {
 
 
-            // authenticate not implemented yet
             if(authenticate()) {
              
                 // std::string     _url = _request.pathInfo();
@@ -371,7 +370,7 @@ void    quoteResource::_getQuoteCollection_() {
 
         if((it = paramMap.find("mostFaved")) != paramMap.end() 
                     && it->second[0] == "yes")
-        {
+            {
             typedef     boost::tuple<int, std::string, int> result;
             typedef     dbo::collection<result>     ptrColl;
 
@@ -561,131 +560,6 @@ void    quoteResource::_getQuoteCollection_() {
         responseGenerator   resGen(resObj);
         resGen.putOut(_response);
             
-      /*  
-        Wt::Http::ParameterMap::iterator    it = paramMap.find("authorId");
-        if(it != paramMap.end())
-        {
-            Author  *author_ = new Author(_connectionPool);
-            
-            int     authorCount = 0;
-            std::string     aId = it->second[0];
-            int     authorId = std::stoi(aId);
-            authorCount = author_->getAuthorCount();
-            if(authorId < 1 || authorId > authorCount)
-            {
-                error   err("the provided authorId is out of range",20013);
-                err.putOut(_response);
-            }
-            else
-            {
-                
-                Quote   *quote_= new Quote(_connectionPool);
-                int     quoteCount = 0;
-                quoteCount = quote_->getQuoteCount();
-    
-                std::string     query="";
-                if(paramMap.find("mostFaved") != paramMap.end() && paramMap.find("mostFaved")
-                        ->second[0] == "yes")
-                {
-                    auto    limitIt = paramMap.find("limit");
-                    auto    startIt = paramMap.find("start");
-
-                    
-                    int     limit = 7;
-                    int     start = ++quoteCount;
-                    if(limitIt != paramMap.end())
-                    {
-                        try {
-                            int tempLimit = std::stoi(limitIt->second[0]);
-                            limit = (tempLimit <= 20 ) ? tempLimit : 7;
-                        }catch(std::exception&  e){
-                            std::cout << e.what() << std::endl;
-                        }
-                    }
-                    if(startIt != paramMap.end())
-                    {
-                        
-                        try {
-                            int tempStart = std::stoi(startIt->second[0]);
-                            start = (tempStart > 0 && tempStart < quoteCount+1) ? tempStart : quoteCount+1;
-                        }catch(std::exception&  e) {
-                            std::cout << e.what() << std::endl;
-                        }
-                    }
-                        query = "select id, text, faves from quote where Author_id = " +
-                        std::to_string(authorId) + " and id < " +
-                        std::to_string(start) + " ORDER BY faves DESC LIMIT " 
-                        + std::to_string(limit);
-                }
-                typedef boost::tuple<int, std::string, int> result; 
-                // respond with the   
-                typedef dbo::collection<result>   ptrColl;
-                
-                ptrColl    qPtrColl = quote_->query<result>(query);
-                 
-                WJO     resObj;
-                resObj["errorMessage"] = WJV(std::string());
-                resObj["errorCode"] = WJV(0);
-                resObj["responseData"] =  WJV(Wt::Json::ObjectType);
-                WJO&    resData = resObj["responseData"];
-                resData["quotes"] = WJV(Wt::Json::ArrayType);
-                Wt::Json::Array&    resDataArr = resData["quotes"];
-                for(ptrColl::iterator   it = qPtrColl.begin(); 
-                        it != qPtrColl.end(); it++)
-                {
-                    WJV     res = WJV(Wt::Json::ObjectType);
-                    WJO&    resO = res;
-                    resO["id"] = WJV((*it).get<0>());
-                    resO["text"] = WJV((*it).get<1>());
-                    resO["faves"] = WJV((*it).get<2>());
-
-                    resDataArr.push_back(res);
-                }
-                responseGenerator   resGen(resObj);
-                resGen.putOut(_response);
-                
-                quote_->commit();
-            }
-            author_->commit();
-            
-        }
-        else
-        {
-            Quote   *quote_ = new Quote(_connectionPool);
-            // tomporary return all the quotes
-            std::string     query = "select q from quote q";        
-            typedef dbo::collection<dbo::ptr<quote> >   ptrColl;
-            ptrColl    qPtrColl = quote_->query<dbo::ptr<quote> >(query);
-            WJO     resObj;
-            resObj["errorMessage"] = WJV(std::string());
-            resObj["errorCode"] = WJV(0);
-            resObj["responseData"] = WJV(Wt::Json::ArrayType);
-            Wt::Json::Array&    resData = resObj["responseData"];
-            //resData["quotes"] = WJV(Wt::Json::ArrayType);
-            //Wt::Json::Array&    resDataArr = resData["quotes"];
-            for(ptrColl::iterator   it = qPtrColl.begin();
-                    it != qPtrColl.end(); it++)
-            {
-                WJV     res = WJV(Wt::Json::ObjectType);
-                WJO&    resO = res;
-                resO["id"] = WJV((*it).id());
-                resO["text"] = WJV((*it)->text);
-                //std::cout << (*it)->text << std::endl;
-                resO["author_id"] = WJV((*it)->Author.id());
-                std::string   timeStr = (*it)->date_published;
-                resO["date_published"]= WJV(Wt::WString::fromUTF8(timeStr));
-                resO["rating"]= WJV((*it)->rating);
-                resO["viewers"] = WJV((*it)->viewers);
-                resO["faves"] = WJV((*it)->faves);
-
-                resData.push_back(res);
-             }
-            responseGenerator   resGen(resObj);
-            resGen.putOut(_response);
-            
-            quote_->commit();
-         }
-        */
     quote_->commit();    
 }
 
@@ -828,6 +702,7 @@ void    quoteResource::_createQuote_() {
                if(jtext.isNull() || jtext.type() != Wt::Json::Type::StringType)
                {
                     error   bodyErr("The provided body is not well formed",20008);
+                    quote_->commit();
                     bodyErr.putOut(_response);
                }
                else
@@ -1309,6 +1184,8 @@ void    quoteResource::_deleteAuthor_() {
 bool    quoteResource::authenticate() {
 
     std::string     authString = _request.headerValue("Authorization");
+    // dbug 
+    std::cout << "____ AUTH STRING _____ : " << authString << std::endl;
     // TODO : do a size check for the value of the Authorization header
     if ( authString == "") {
         std::string     _url = _request.pathInfo();
@@ -1322,6 +1199,7 @@ bool    quoteResource::authenticate() {
     }
     else
     {
+        std::cout << "____ AUTH STRING _____ : " << authString << std::endl;
         if(authString.find("Bearer")!=std::string::npos)
         {
             tokenExtractor  tokenStr(authString);

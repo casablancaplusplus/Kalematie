@@ -27,7 +27,11 @@ class   error {
         {
             std::ostream&   out = response.out();
             
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
             response.setMimeType("application/json");
+            
             out << "{" << std::endl;
             out << "    \"errorMessage\":\""<<_errMessage<<"\"," <<std::endl;
             out << "    \"errorCode\":\""<< _errCode <<"\"," << std::endl;

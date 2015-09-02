@@ -19,6 +19,8 @@ class   responseGenerator {
         // second argument a true value
         void    putOut(Wt::Http::Response&   res, bool  emptyRes = false)
         {
+            res.addHeader("Access-Control-Allow-Origin","*");
+            res.addHeader("Access-Control-Allow-Headers","Content-Type, Authorization");
             res.setMimeType("application/json");
             if(emptyRes)
             {
