@@ -371,10 +371,10 @@ void    quoteResource::_getQuoteCollection_() {
         if((it = paramMap.find("mostFaved")) != paramMap.end() 
                     && it->second[0] == "yes")
             {
-            typedef     boost::tuple<int, std::string, int> result;
+            typedef     boost::tuple<int, std::string, int, int, double, int, std::string, int> result;
             typedef     dbo::collection<result>     ptrColl;
 
-            std::string     query = "select id, text, faves from quote ";
+            std::string     query = "select id, text, faves, viewers, rating, originality, date_published, Author_id from quote ";
 
             if(authorId != 0) {
                 query += " WHERE Author_id = " + std::to_string(authorId);
@@ -400,6 +400,18 @@ void    quoteResource::_getQuoteCollection_() {
                 resO["id"] = WJV((*it).get<0>());
                 resO["text"] = WJV((*it).get<1>());
                 resO["faves"] = WJV((*it).get<2>());
+                resO["viewers"] = WJV((*it).get<3>());
+                resO["rating"] = WJV((*it).get<4>());
+                resO["originality"] = WJV((*it).get<5>());
+                resO["date_published"] = WJV((*it).get<6>());
+                // fetch the author
+                Author  *author_ = new Author(_connectionPool);
+                if(author_->initWithAuthorId((*it).get<7>())) {
+                    resO["author"] = WJV(author_->getNickName());
+                } else {
+                    resO["author"] = WJV("unknown");
+                }
+                author_->commit();
 
                 resDataArr.push_back(res);
             }
@@ -408,10 +420,10 @@ void    quoteResource::_getQuoteCollection_() {
         else if((it = paramMap.find("topRated")) != paramMap.end()
                 && it->second[0] == "yes")
         {
-            typedef     boost::tuple<int, std::string, double> result;
+            typedef     boost::tuple<int, std::string, double, int, int, int, std::string, int> result;
             typedef     dbo::collection<result>     ptrColl;
 
-            std::string     query = "select id, text, rating from quote ";
+            std::string     query = "select id, text, rating, viewers, faves, originality, date_published, Author_id from quote ";
 
             if(authorId != 0) {
                 query += " WHERE Author_id = " + std::to_string(authorId);
@@ -437,7 +449,19 @@ void    quoteResource::_getQuoteCollection_() {
                 resO["id"] = WJV((*it).get<0>());
                 resO["text"] = WJV((*it).get<1>());
                 resO["rating"] = WJV((*it).get<2>());
+                resO["viewers"] = WJV((*it).get<3>());
+                resO["faves"] = WJV((*it).get<4>());
+                resO["originality"] = WJV((*it).get<5>());
+                resO["date_published"] = WJV((*it).get<6>());
 
+                Author  *author_ = new Author(_connectionPool);
+                if(author_->initWithAuthorId((*it).get<7>())) {
+                    resO["author"] = WJV(author_->getNickName());
+                } else {
+                    resO["author"] = WJV("unknown");
+                }
+                author_->commit();
+                
                 resDataArr.push_back(res);
             }
 
@@ -445,10 +469,10 @@ void    quoteResource::_getQuoteCollection_() {
         else if((it = paramMap.find("original")) != paramMap.end()
                 &&  it->second[0] == "yes")
         {
-            typedef     boost::tuple<int, std::string, int> result;
+            typedef     boost::tuple<int, std::string, int, std::string, double, int, int, int> result;
             typedef     dbo::collection<result>     ptrColl;
 
-            std::string     query = "select id, text, originality from quote ";
+            std::string     query = "select id, text, originality, date_published, rating, viewers, faves, Author_id from quote ";
 
             if(authorId != 0) {
                 query += " WHERE Author_id = " + std::to_string(authorId);
@@ -474,6 +498,18 @@ void    quoteResource::_getQuoteCollection_() {
                 resO["id"] = WJV((*it).get<0>());
                 resO["text"] = WJV((*it).get<1>());
                 resO["originality"] = WJV((*it).get<2>());
+                resO["date_published"] = WJV((*it).get<3>());
+                resO["rating"] = WJV((*it).get<4>());
+                resO["viewers"] = WJV((*it).get<5>());
+                resO["faves"] = WJV((*it).get<6>());
+
+                Author  *author_ = new Author(_connectionPool);
+                if(author_->initWithAuthorId((*it).get<7>())) {
+                    resO["author"] = WJV(author_->getNickName());
+                } else {
+                    resO["author"] = WJV("unknown");
+                }
+                author_->commit();
 
                 resDataArr.push_back(res);
             }
@@ -501,10 +537,10 @@ void    quoteResource::_getQuoteCollection_() {
         
             }
 
-            typedef     boost::tuple<int, std::string> result;
+            typedef     boost::tuple<int, std::string, std::string, double, int, int, int, int> result;
             typedef     dbo::collection<result>     ptrColl;
             
-            std::string     query = "select q.id, q.text from quote  q inner join fave  f on q.id = f.quoteId WHERE f.faverId = " 
+            std::string     query = "select q.id, q.text, q.date_published, q.rating, q.viewers, q.faves, q.originality q.Author_id from quote  q inner join fave  f on q.id = f.quoteId WHERE f.faverId = " 
                 + std::to_string(authorId) + " AND f.quoteId < " + std::to_string(start) + " ORDER BY f.quoteId DESC LIMIT "
                 + std::to_string(limit);
 
@@ -518,17 +554,30 @@ void    quoteResource::_getQuoteCollection_() {
                 WJO&    resO = res;
                 resO["id"] = WJV((*it).get<0>());
                 resO["text"] = WJV((*it).get<1>());
+                resO["date_published"] = WJV((*it).get<2>());
+                resO["rating"] = WJV((*it).get<3>());
+                resO["viewers"] = WJV((*it).get<4>());
+                resO["faves"] = WJV((*it).get<5>());
+                resO["originality"] = WJV((*it).get<6>());
 
+                Author  *author_ = new Author(_connectionPool);
+                if(author_->initWithAuthorId((*it).get<7>())) {
+                    resO["author"] = WJV(author_->getNickName());
+                } else {
+                    resO["author"] = WJV("unknown");
+                }
+                author_->commit();
+                
                 resDataArr.push_back(res);
             }
 
         }
         else
         {
-            typedef     boost::tuple<int, std::string>  result;
+            typedef     boost::tuple<int, std::string, std::string, double, int, int, int, int>  result;
             typedef     dbo::collection<result>     ptrColl;
 
-            std::string     query = "select id, text from quote ";
+            std::string     query = "select id, text, date_published, rating, viewers, faves, originality, Author_id from quote ";
             if(authorId != 0 ) {
                 query += " WHERE Author_id = " + std::to_string(authorId);
                 query += " AND id < " + std::to_string(start) + " ORDER BY id \
@@ -551,6 +600,19 @@ void    quoteResource::_getQuoteCollection_() {
                 WJO&    resO = res;
                 resO["id"] = WJV((*it).get<0>());
                 resO["text"] = WJV((*it).get<1>());
+                resO["date_published"] = WJV((*it).get<2>());
+                resO["rating"] = WJV((*it).get<3>());
+                resO["viewers"] = WJV((*it).get<4>());
+                resO["faves"] = WJV((*it).get<5>());
+                resO["originality"] = WJV((*it).get<6>());
+
+                Author  *author_ = new Author(_connectionPool);
+                if(author_->initWithAuthorId((*it).get<7>())) {
+                    resO["author"] = WJV(author_->getNickName());
+                } else {
+                    resO["author"] = WJV("unknown");
+                }
+                author_->commit();
 
                 resDataArr.push_back(res);
             }
